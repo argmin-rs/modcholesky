@@ -23,6 +23,7 @@
 //!   SIAM J. Optim. Vol. 9, No. 4, pp. 1135-1148, 1999
 
 // #![feature(uniform_paths)]
+// #![feature(use_extern_macros)]
 
 mod gershgorin;
 
