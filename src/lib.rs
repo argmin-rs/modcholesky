@@ -7,6 +7,11 @@
 
 //! Modified Cholesky decompositions
 //!
+//! # TODOs
+//!
+//! * Think about `ModCholesky` struct
+//! * Be generic over element type (f64/f32/complex32/complex64)
+//!
 //! # References
 //!
 //! * Semyon Aranovich Gerschgorin.
@@ -22,20 +27,172 @@
 //!   A revised modified Cholesky factorization.
 //!   SIAM J. Optim. Vol. 9, No. 4, pp. 1135-1148, 1999
 
-// #![feature(uniform_paths)]
-// #![feature(use_extern_macros)]
-
 mod gershgorin;
 
-use failure::Error;
-// use gershgorin::*;
+// use crate::gershgorin::*;
+use failure::{bail, Error};
+
+// pub struct ModCholesky<L, E> {
+//     l: L,
+//     e: E,
+// }
 
 pub trait ModCholeskySchnabel1
 where
     Self: Sized,
 {
     type L;
-    fn mod_cholesky_schnabel1(&self) -> Result<Self::L, Error>;
+    fn mod_cholesky_schnabel1(&self) -> Result<Self::L, Error> {
+        bail!("Not implemented!")
+    }
+
+    fn mod_cholesky_schnabel1_inplace(&mut self) -> Result<(), Error> {
+        bail!("Not implemented!")
+    }
+}
+
+impl ModCholeskySchnabel1 for ndarray::Array2<f64> {
+    type L = ndarray::Array2<f64>;
+
+    fn mod_cholesky_schnabel1_inplace(&mut self) -> Result<(), Error> {
+        assert!(self.is_square());
+        use ndarray::s;
+
+        // cbrt = cubic root
+        let tau = std::f64::EPSILON.cbrt();
+
+        let n = self.raw_dim()[0];
+
+        let mut phaseone = true;
+
+        let gamma = self
+            .diag()
+            .fold(0.0, |acc, x| if x.abs() > acc { x.abs() } else { acc });
+
+        let mut j = 0;
+        // Phase one, `self` potentially positive-definite
+        while j < n && phaseone {
+            // Pivot on maximum diagonal of remaining submatrix
+            let max_idx = index_of_largest(&self.diag().slice(s![j..]));
+            if max_idx != j {
+                swap_rows(self, j, j + max_idx);
+                swap_columns(self, j, j + max_idx);
+            }
+            let tmp = (j + 1..n).fold(std::f64::INFINITY, |acc, i| {
+                let nv = self[(i, i)] - self[(i, j)].powi(2) / self[(j, j)];
+                if nv < acc {
+                    nv
+                } else {
+                    acc
+                }
+            });
+            if tmp < tau * gamma {
+                // Go to phase two
+                phaseone = false;
+                break;
+            } else {
+                // Perform jth iteration of factorization
+                self[(j, j)] = self[(j, j)].sqrt();
+                for i in (j + 1)..n {
+                    self[(i, j)] /= self[(j, j)];
+                    for k in (j + 1)..(i + 1) {
+                        self[(i, k)] -= self[(i, j)] * self[(k, j)];
+                    }
+                }
+                j += 1;
+            }
+        }
+
+        let mut delta;
+        let mut delta_prev = 0.0;
+
+        // Phase two, `self` not positive-definite
+        if !phaseone {
+            let k = j;
+            // let k = if j == 0 { 0 } else { j - 1 };
+
+            // Calculate lower Gershgorin bounds of self_{k+1}
+            let mut g = ndarray::Array::zeros(n);
+            for i in k..n {
+                g[i] = self[(i, i)]
+                    - self.slice(s![i, k..i]).map(|x| x.abs()).scalar_sum()
+                    - self.slice(s![(i + 1).., i]).map(|x| x.abs()).scalar_sum();
+            }
+
+            // Modified Cholesky decomposition
+            // SK CHECK INDEX
+            for j in k..(n - 2) {
+                // Pivot on maximum lower Gershgorin bound estimate
+                let max_idx = index_of_largest(&g.slice(s![j..]));
+                println!("{:?}", g);
+                println!("max: {}: j: {}", max_idx, j);
+                if max_idx != j {
+                    swap_rows(self, j, j + max_idx);
+                    swap_columns(self, j, j + max_idx);
+                }
+
+                // Calculate E_jj and add to diagonal
+                let normj = self.slice(s![(j + 1).., j]).map(|x| x.abs()).scalar_sum();
+                delta = 0.0f64
+                    .max(delta_prev)
+                    .max(-self[(j, j)] + normj.max(tau * gamma));
+                println!("{}: {}", j, delta);
+                if delta > 0.0 {
+                    self[(j, j)] += delta;
+                    delta_prev = delta;
+                }
+
+                // Update Gershgorin bound estimates
+                if (self[(j, j)] - normj).abs() > 2.0 * std::f64::EPSILON {
+                    let tmp = 1.0 - normj / self[(j, j)];
+                    for i in (j + 1)..n {
+                        g[i] += self[(i, j)].abs() * tmp;
+                    }
+                }
+
+                // perform jth iteration of factorization
+                self[(j, j)] = self[(j, j)].sqrt();
+                for i in (j + 1)..n {
+                    self[(i, j)] /= self[(j, j)];
+                    for k in (j + 1)..(i + 1) {
+                        self[(i, k)] -= self[(i, j)] * self[(k, j)];
+                    }
+                }
+            }
+
+            // final 2x2 submatrix
+            let (lhi, llo) = eigenvalues_2x2(&self.slice(s![(n - 2).., (n - 2)..]));
+            println!("eig: {:?}", (lhi, llo));
+            delta = 0.0f64
+                .max(-llo + tau * gamma.max(1.0 / (1.0 - tau) * (lhi - llo)))
+                .max(delta_prev);
+            if delta > 0.0 {
+                self[(n - 2, n - 2)] += delta;
+                self[(n - 1, n - 1)] += delta;
+                delta_prev = delta;
+            }
+            self[(n - 2, n - 2)] = self[(n - 2, n - 2)].sqrt();
+            self[(n - 1, n - 2)] = self[(n - 1, n - 2)] / self[(n - 2, n - 2)];
+            self[(n - 1, n - 1)] = (self[(n - 1, n - 1)] - self[(n - 1, n - 2)].powi(2)).sqrt();
+        }
+
+        Ok(())
+    }
+}
+
+fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
+    let a = mat[(0, 0)];
+    let b = mat[(0, 1)];
+    let c = mat[(1, 0)];
+    let d = mat[(1, 1)];
+    let tmp = ((-(a + d) / 2.0).powi(2) - a * d + b * c).sqrt();
+    let l1 = (a + d) / 2.0 + tmp;
+    let l2 = (a + d) / 2.0 - tmp;
+    if l1.abs() > l2.abs() {
+        (l1, l2)
+    } else {
+        (l2, l1)
+    }
 }
 
 fn swap_columns<T>(mat: &mut ndarray::Array2<T>, idx1: usize, idx2: usize)
@@ -63,12 +220,14 @@ where
     <ndarray::ViewRepr<&'a T> as ndarray::Data>::Elem:
         std::cmp::PartialOrd + num::traits::Signed + Clone,
 {
-    let mut max = num::abs(c[0].clone());
+    // let mut max = num::abs(c[0].clone());
+    let mut max = c[0].clone();
     let mut max_idx = 0;
     c.iter()
         .enumerate()
         .map(|(i, ci)| {
-            let ci = num::abs(ci.clone());
+            // let ci = num::abs(ci.clone());
+            let ci = ci.clone();
             if ci > max {
                 max = ci;
                 max_idx = i
@@ -130,6 +289,28 @@ mod tests {
         assert_eq!(idx + j, 3);
         // this should work, but it doesn't.
         // assert_eq!(b, c);
+    }
+
+    #[test]
+    fn test_modified_cholesky_schnabel1() {
+        use super::ModCholeskySchnabel1;
+        // let mut a: ndarray::Array2<f64> = ndarray::arr2(&[
+        //     [0.3571, -0.1030, 0.0274, -0.0459],
+        //     [-0.1030, 0.2525, 0.0736, -0.3845],
+        //     [0.0274, 0.0736, 0.2340, -0.2878],
+        //     [-0.0459, -0.3845, -0.2878, 0.5549],
+        // ]);
+        let mut a: ndarray::Array2<f64> =
+            ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
+        let l = a.mod_cholesky_schnabel1_inplace().unwrap();
+        a[(0, 1)] = 0.0;
+        a[(0, 2)] = 0.0;
+        a[(1, 2)] = 0.0;
+        // a[(0, 3)] = 0.0;
+        // a[(1, 3)] = 0.0;
+        // a[(2, 3)] = 0.0;
+        println!("{:?}", a);
+        println!("{:?}", a.dot(&(a.t())));
     }
 
     // #[test]
