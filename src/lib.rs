@@ -20,6 +20,9 @@
 //! * Robert B. Schnabel and Elizabeth Eskow.
 //!   A new modified Cholesky factorization.
 //!   SIAM J. Sci. Stat. Comput. Vol. 11, No. 6, pp. 1136-1158, November 1990
+//! * Elizabeth Eskow and Robert B. Schnabel.
+//!   Algorithm 695: Software for a new modified Cholesky factorization.
+//!   ACM Trans. Math. Softw. Vol. 17, p. 306-312, 1991
 //! * Sheung Hun Cheng and Nicholas J. Higham.
 //!   A modified Cholesky algorithm based on a symmetric indefinite factorization.
 //!   SIAM J. Matrix Anal. Appl. Vol. 19, No. 4, pp. 1097-1110, October 1998
