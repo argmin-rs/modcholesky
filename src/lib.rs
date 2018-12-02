@@ -109,7 +109,6 @@ impl ModCholeskySchnabel1 for ndarray::Array2<f64> {
         // Phase two, `self` not positive-definite
         if !phaseone {
             let k = j;
-            // let k = if j == 0 { 0 } else { j - 1 };
 
             // Calculate lower Gershgorin bounds of self_{k+1}
             let mut g = ndarray::Array::zeros(n);
@@ -120,7 +119,6 @@ impl ModCholeskySchnabel1 for ndarray::Array2<f64> {
             }
 
             // Modified Cholesky decomposition
-            // SK CHECK INDEX
             for j in k..(n - 2) {
                 // Pivot on maximum lower Gershgorin bound estimate
                 let max_idx = index_of_largest(&g.slice(s![j..]));
@@ -136,14 +134,13 @@ impl ModCholeskySchnabel1 for ndarray::Array2<f64> {
                 delta = 0.0f64
                     .max(delta_prev)
                     .max(-self[(j, j)] + normj.max(tau * gamma));
-                println!("{}: {}", j, delta);
                 if delta > 0.0 {
                     self[(j, j)] += delta;
                     delta_prev = delta;
                 }
 
                 // Update Gershgorin bound estimates
-                if (self[(j, j)] - normj).abs() > 2.0 * std::f64::EPSILON {
+                if (self[(j, j)] - normj).abs() > 1.0 * std::f64::EPSILON {
                     let tmp = 1.0 - normj / self[(j, j)];
                     for i in (j + 1)..n {
                         g[i] += self[(i, j)].abs() * tmp;
@@ -161,15 +158,18 @@ impl ModCholeskySchnabel1 for ndarray::Array2<f64> {
             }
 
             // final 2x2 submatrix
+
+            // this fixes the final 2x2 submatrix' symmetry
+            self[(n - 2, n - 1)] = self[(n - 1, n - 2)];
+
             let (lhi, llo) = eigenvalues_2x2(&self.slice(s![(n - 2).., (n - 2)..]));
-            println!("eig: {:?}", (lhi, llo));
             delta = 0.0f64
                 .max(-llo + tau * gamma.max(1.0 / (1.0 - tau) * (lhi - llo)))
                 .max(delta_prev);
             if delta > 0.0 {
                 self[(n - 2, n - 2)] += delta;
                 self[(n - 1, n - 1)] += delta;
-                delta_prev = delta;
+                // delta_prev = delta;
             }
             self[(n - 2, n - 2)] = self[(n - 2, n - 2)].sqrt();
             self[(n - 1, n - 2)] = self[(n - 1, n - 2)] / self[(n - 2, n - 2)];
@@ -294,24 +294,39 @@ mod tests {
     #[test]
     fn test_modified_cholesky_schnabel1() {
         use super::ModCholeskySchnabel1;
-        // let mut a: ndarray::Array2<f64> = ndarray::arr2(&[
-        //     [0.3571, -0.1030, 0.0274, -0.0459],
-        //     [-0.1030, 0.2525, 0.0736, -0.3845],
-        //     [0.0274, 0.0736, 0.2340, -0.2878],
-        //     [-0.0459, -0.3845, -0.2878, 0.5549],
-        // ]);
         let mut a: ndarray::Array2<f64> =
             ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
-        let l = a.mod_cholesky_schnabel1_inplace().unwrap();
+        let res = ndarray::arr2(&[[3.0, 1.0, 2.0], [1.0, 3.2196, 3.0], [2.0, 3.0, 3.2196]]);
+        a.mod_cholesky_schnabel1_inplace().unwrap();
         a[(0, 1)] = 0.0;
         a[(0, 2)] = 0.0;
         a[(1, 2)] = 0.0;
-        // a[(0, 3)] = 0.0;
-        // a[(1, 3)] = 0.0;
-        // a[(2, 3)] = 0.0;
         println!("{:?}", a);
         println!("{:?}", a.dot(&(a.t())));
+        assert!(a.dot(&(a.t())).all_close(&res, 1e-4));
     }
+
+    // #[test]
+    // fn test_modified_cholesky_schnabel1_2() {
+    //     use super::ModCholeskySchnabel1;
+    //     let mut a: ndarray::Array2<f64> = ndarray::arr2(&[
+    //         [0.3571, -0.1030, 0.0274, -0.0459],
+    //         [-0.1030, 0.2525, 0.0736, -0.3845],
+    //         [0.0274, 0.0736, 0.2340, -0.2878],
+    //         [-0.0459, -0.3845, -0.2878, 0.5549],
+    //     ]);
+    //     // let mut a: ndarray::Array2<f64> =
+    //     //     ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
+    //     let l = a.mod_cholesky_schnabel1_inplace().unwrap();
+    //     a[(0, 1)] = 0.0;
+    //     a[(0, 2)] = 0.0;
+    //     a[(1, 2)] = 0.0;
+    //     a[(0, 3)] = 0.0;
+    //     a[(1, 3)] = 0.0;
+    //     a[(2, 3)] = 0.0;
+    //     println!("{:?}", a);
+    //     println!("{:?}", a.dot(&(a.t())));
+    // }
 
     // #[test]
     // fn test_modified_cholesky() {
