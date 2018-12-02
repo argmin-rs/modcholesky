@@ -122,8 +122,6 @@ impl ModCholeskySchnabel1 for ndarray::Array2<f64> {
             for j in k..(n - 2) {
                 // Pivot on maximum lower Gershgorin bound estimate
                 let max_idx = index_of_largest(&g.slice(s![j..]));
-                println!("{:?}", g);
-                println!("max: {}: j: {}", max_idx, j);
                 if max_idx != j {
                     swap_rows(self, j, j + max_idx);
                     swap_columns(self, j, j + max_idx);
@@ -140,7 +138,7 @@ impl ModCholeskySchnabel1 for ndarray::Array2<f64> {
                 }
 
                 // Update Gershgorin bound estimates
-                if (self[(j, j)] - normj).abs() > 1.0 * std::f64::EPSILON {
+                if (self[(j, j)] - normj).abs() > 100.0 * std::f64::EPSILON {
                     let tmp = 1.0 - normj / self[(j, j)];
                     for i in (j + 1)..n {
                         g[i] += self[(i, j)].abs() * tmp;
@@ -298,11 +296,12 @@ mod tests {
             ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
         let res = ndarray::arr2(&[[3.0, 1.0, 2.0], [1.0, 3.2196, 3.0], [2.0, 3.0, 3.2196]]);
         a.mod_cholesky_schnabel1_inplace().unwrap();
+        // set upper triangle off diagonals to zero because its just garbage there
         a[(0, 1)] = 0.0;
         a[(0, 2)] = 0.0;
         a[(1, 2)] = 0.0;
-        println!("{:?}", a);
-        println!("{:?}", a.dot(&(a.t())));
+        // println!("{:?}", a);
+        // println!("{:?}", a.dot(&(a.t())));
         assert!(a.dot(&(a.t())).all_close(&res, 1e-4));
     }
 
@@ -315,15 +314,21 @@ mod tests {
     //         [0.0274, 0.0736, 0.2340, -0.2878],
     //         [-0.0459, -0.3845, -0.2878, 0.5549],
     //     ]);
-    //     // let mut a: ndarray::Array2<f64> =
-    //     //     ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
-    //     let l = a.mod_cholesky_schnabel1_inplace().unwrap();
+    //     a.mod_cholesky_schnabel1_inplace().unwrap();
+    //
+    //     // set upper triangle off diagonals to zero because its just garbage there
     //     a[(0, 1)] = 0.0;
     //     a[(0, 2)] = 0.0;
-    //     a[(1, 2)] = 0.0;
     //     a[(0, 3)] = 0.0;
+    //     a[(1, 2)] = 0.0;
     //     a[(1, 3)] = 0.0;
     //     a[(2, 3)] = 0.0;
+    //     let m = a.dot(&a.t());
+    //     // println!("{:?}", m.into_diag());
+    //     // println!(
+    //     //     "{:?}",
+    //     //     m.into_diag() - ndarray::arr1(&[0.3571, 0.2525, 0.2340, 0.5549])
+    //     // );
     //     println!("{:?}", a);
     //     println!("{:?}", a.dot(&(a.t())));
     // }
