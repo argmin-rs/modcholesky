@@ -19,11 +19,6 @@
 //!   Algorithm 695: Software for a new modified Cholesky factorization.
 //!   ACM Trans. Math. Softw. Vol. 17, p. 306-312, 1991
 
-// necessary to get clippy to shut up about the s! macro
-#![allow(clippy::deref_addrof)]
-// I really do not like the a..=b syntax
-#![allow(clippy::range_plus_one)]
-
 use crate::utils::{eigenvalues_2x2, index_of_largest, swap_columns, swap_rows};
 use failure::{bail, Error};
 

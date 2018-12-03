@@ -1,0 +1,135 @@
+// Copyright 2018 Stefan Kroboth
+//
+// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+// http://apache.org/licenses/LICENSE-2.0> or the MIT license <LICENSE-MIT or
+// http://opensource.org/licenses/MIT>, at your option. This file may not be
+// copied, modified, or distributed except according to those terms.
+
+//! Gill, Murray and Wright (1983)
+//!
+//! Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
+//!
+//! # References
+//!
+//! * Philip E. Gill, Walter Murray and Margaret H. Wright.
+//!   Practical Optimization.
+//!   ISBN 978-0122839528, 1982
+//! * Jorge Nocedal and Stephen J. Wright.
+//!   Numerical Optimization.
+//!   Springer. ISBN 0-387-30303-0, 2006.
+
+use crate::utils::{index_of_largest_abs, swap_columns, swap_rows};
+use failure::Error;
+
+pub trait ModCholeskyGMW83
+where
+    Self: Sized,
+{
+    fn mod_cholesky_gmw83(&self) -> Result<(Self, Self, Self), Error>;
+}
+
+impl ModCholeskyGMW83 for ndarray::Array2<f64> {
+    /// Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
+    ///
+    /// This can certainly be implemented more memory efficiently
+    fn mod_cholesky_gmw83(
+        &self,
+    ) -> Result<
+        (
+            ndarray::Array2<f64>,
+            ndarray::Array2<f64>,
+            ndarray::Array2<f64>,
+        ),
+        Error,
+    > {
+        use ndarray::s;
+        debug_assert!(self.is_square());
+        let n = self.raw_dim()[0];
+        let a_diag = self.diag();
+
+        let diag_max = a_diag.fold(0.0, |acc, x| if x.abs() > acc { x.abs() } else { acc });
+        let off_diag_max =
+            self.indexed_iter()
+                .filter(|((i, j), _)| i != j)
+                .fold(
+                    0.0,
+                    |acc, ((_, _), x)| if x.abs() > acc { x.abs() } else { acc },
+                );
+
+        let delta = std::f64::EPSILON * 1.0f64.max(diag_max + off_diag_max);
+        let beta = (diag_max
+            .max(off_diag_max / ((n as f64).powi(2) - 1.0).sqrt())
+            .max(std::f64::EPSILON))
+        .sqrt();
+
+        let mut c: ndarray::Array2<f64> = ndarray::Array2::zeros(self.raw_dim());
+        c.diag_mut().assign(&a_diag);
+        let mut l: ndarray::Array2<f64> = ndarray::Array::zeros((n, n));
+        let mut d: ndarray::Array1<f64> = ndarray::Array::zeros(n);
+
+        for j in 0..n {
+            let max_idx = index_of_largest_abs(&c.diag().slice(s![j..]));
+            swap_rows(&mut c, j, j + max_idx);
+            swap_columns(&mut c, j, j + max_idx);
+            for s in 0..j {
+                l[(j, s)] = c[(j, s)] / d[s];
+            }
+
+            for i in j..n {
+                c[(i, j)] =
+                    self[(i, j)] - (&l.slice(s![j, 0..j]) * &c.slice(s![i, 0..j])).scalar_sum();
+            }
+
+            let theta =
+                if j < (n - 1) {
+                    c.slice(s![(j + 1).., j]).fold(0.0, |acc, x| {
+                        if (*x).abs() > acc {
+                            (*x).abs()
+                        } else {
+                            acc
+                        }
+                    })
+                } else {
+                    0.0
+                };
+
+            d[j] = c[(j, j)].abs().max((theta / beta).powi(2)).max(delta);
+
+            // weirdly enough, this seems to be necessary, even though it is not part of the
+            // algorithm in the reference. The reason seems to be that d[j] is not available at the
+            // beginning of the loop...
+            l[(j, j)] = c[(j, j)] / d[j];
+
+            if j < (n - 1) {
+                for i in (j + 1)..n {
+                    let c2 = c[(i, j)].powi(2);
+                    c[(i, i)] -= c2 / d[j];
+                }
+            }
+        }
+        let mut dout = ndarray::Array2::eye(n);
+        dout.diag_mut().assign(&d);
+        Ok((l, dout, c))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_modified_cholesky() {
+        let a: ndarray::Array2<f64> =
+            ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, -0.004]]);
+        let (l, d, _) = a.mod_cholesky_gmw83().unwrap();
+        let f = l.dot(&d).dot(&(l.t()));
+        let res: ndarray::Array2<f64> =
+            ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, 3.004]]);
+        assert!(f.all_close(&res, 2.0 * std::f64::EPSILON));
+        // let dsqrt = d.map(|x| x.sqrt());
+        // let m = l.dot(&dsqrt);
+        // println!("l: {:?}", l);
+        // println!("d: {:?}", d);
+        // println!("f: {:?}", f);
+        // println!("m: {:?}", m);
+    }
+}

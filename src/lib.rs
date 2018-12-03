@@ -14,6 +14,9 @@
 //!
 //! # References
 //!
+//! * Philip E. Gill, Walter Murray and Margaret H. Wright.
+//!   Practical Optimization.
+//!   ISBN 978-0122839528
 //! * Semyon Aranovich Gershgorin.
 //!   Über die Abgrenzung der Eigenwerte einer Matrix.
 //!   Izv. Akad. Nauk. USSR Otd. Fiz.-Mat. Nauk, 6: 749–754, 1931.
@@ -29,32 +32,20 @@
 //! * Robert B. Schnabel and Elizabeth Eskow.
 //!   A revised modified Cholesky factorization.
 //!   SIAM J. Optim. Vol. 9, No. 4, pp. 1135-1148, 1999
+//! * Jorge Nocedal and Stephen J. Wright.
+//!   Numerical Optimization.
+//!   Springer. ISBN 0-387-30303-0, 2006.
+
+// necessary to get clippy to shut up about the s! macro
+#![allow(clippy::deref_addrof)]
+// I really do not like the a..=b syntax
+#![allow(clippy::range_plus_one)]
 
 mod gershgorin;
+mod gmw83;
 mod se90;
 mod utils;
 
 pub use crate::gershgorin::*;
+pub use crate::gmw83::ModCholeskyGMW83;
 pub use crate::se90::ModCholeskySE90;
-
-#[cfg(test)]
-mod tests {
-    // use super::*;
-    // #[test]
-    // fn test_modified_cholesky() {
-    //     use super::ModifiedCholesky;
-    //     let a: ndarray::Array2<f64> =
-    //         ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, -0.004]]);
-    //     let (l, d, _) = a.modified_cholesky().unwrap();
-    //     let f = l.dot(&d).dot(&(l.t()));
-    //     let res: ndarray::Array2<f64> =
-    //         ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, 3.004]]);
-    //     assert!(f.all_close(&res, 2.0 * std::f64::EPSILON));
-    //     // let dsqrt = d.map(|x| x.sqrt());
-    //     // let m = l.dot(&dsqrt);
-    //     // println!("l: {:?}", l);
-    //     // println!("d: {:?}", d);
-    //     // println!("f: {:?}", f);
-    //     // println!("m: {:?}", m);
-    // }
-}
