@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["ModCholeskySchnabel1",""]]});
+initSidebarItems({"trait":[["GershgorinCircles",""],["ModCholeskySE90",""]]});
