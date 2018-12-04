@@ -64,7 +64,7 @@ impl ModCholeskyGMW81 for ndarray::Array2<f64> {
 
         let mut c: ndarray::Array2<f64> = ndarray::Array2::zeros(self.raw_dim());
         c.diag_mut().assign(&a_diag);
-        let mut l: ndarray::Array2<f64> = ndarray::Array::zeros((n, n));
+        let mut l: ndarray::Array2<f64> = ndarray::Array::eye(n);
         let mut d: ndarray::Array1<f64> = ndarray::Array::zeros(n);
 
         for j in 0..n {
@@ -94,11 +94,6 @@ impl ModCholeskyGMW81 for ndarray::Array2<f64> {
                 };
 
             d[j] = c[(j, j)].abs().max((theta / beta).powi(2)).max(delta);
-
-            // weirdly enough, this seems to be necessary, even though it is not part of the
-            // algorithm in the reference. The reason seems to be that d[j] is not available at the
-            // beginning of the loop...
-            l[(j, j)] = c[(j, j)] / d[j];
 
             if j < (n - 1) {
                 for i in (j + 1)..n {
