@@ -5,7 +5,7 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-//! Gill, Murray and Wright (1983)
+//! Gill, Murray and Wright (1981)
 //!
 //! Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
 //!
@@ -13,26 +13,26 @@
 //!
 //! * Philip E. Gill, Walter Murray and Margaret H. Wright.
 //!   Practical Optimization.
-//!   ISBN 978-0122839528, 1982
+//!   Emerald Group Publishing Limited. ISBN 978-0122839528. 1982
 //! * Jorge Nocedal and Stephen J. Wright.
 //!   Numerical Optimization.
-//!   Springer. ISBN 0-387-30303-0, 2006.
+//!   Springer. ISBN 0-387-30303-0. 2006.
 
 use crate::utils::{index_of_largest_abs, swap_columns, swap_rows};
 use failure::Error;
 
-pub trait ModCholeskyGMW83
+pub trait ModCholeskyGMW81
 where
     Self: Sized,
 {
-    fn mod_cholesky_gmw83(&self) -> Result<(Self, Self, Self), Error>;
+    fn mod_cholesky_gmw81(&self) -> Result<(Self, Self, Self), Error>;
 }
 
-impl ModCholeskyGMW83 for ndarray::Array2<f64> {
+impl ModCholeskyGMW81 for ndarray::Array2<f64> {
     /// Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
     ///
     /// This can certainly be implemented more memory efficiently
-    fn mod_cholesky_gmw83(
+    fn mod_cholesky_gmw81(
         &self,
     ) -> Result<
         (
@@ -120,7 +120,7 @@ mod tests {
     fn test_modified_cholesky() {
         let a: ndarray::Array2<f64> =
             ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, -0.004]]);
-        let (l, d, _) = a.mod_cholesky_gmw83().unwrap();
+        let (l, d, _) = a.mod_cholesky_gmw81().unwrap();
         let f = l.dot(&d).dot(&(l.t()));
         let res: ndarray::Array2<f64> =
             ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, 3.004]]);

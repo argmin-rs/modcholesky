@@ -16,7 +16,7 @@
 //!
 //! * Philip E. Gill, Walter Murray and Margaret H. Wright.
 //!   Practical Optimization.
-//!   ISBN 978-0122839528
+//!   Emerald Group Publishing Limited. ISBN 978-0122839528. 1982
 //! * Semyon Aranovich Gershgorin.
 //!   Über die Abgrenzung der Eigenwerte einer Matrix.
 //!   Izv. Akad. Nauk. USSR Otd. Fiz.-Mat. Nauk, 6: 749–754, 1931.
@@ -34,7 +34,7 @@
 //!   SIAM J. Optim. Vol. 9, No. 4, pp. 1135-1148, 1999
 //! * Jorge Nocedal and Stephen J. Wright.
 //!   Numerical Optimization.
-//!   Springer. ISBN 0-387-30303-0, 2006.
+//!   Springer. ISBN 0-387-30303-0. 2006.
 
 // necessary to get clippy to shut up about the s! macro
 #![allow(clippy::deref_addrof)]
@@ -42,10 +42,10 @@
 #![allow(clippy::range_plus_one)]
 
 mod gershgorin;
-mod gmw83;
+mod gmw81;
 mod se90;
 mod utils;
 
 pub use crate::gershgorin::*;
-pub use crate::gmw83::ModCholeskyGMW83;
+pub use crate::gmw81::ModCholeskyGMW81;
 pub use crate::se90::ModCholeskySE90;
