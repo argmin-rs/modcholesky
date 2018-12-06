@@ -44,8 +44,10 @@
 mod gershgorin;
 mod gmw81;
 mod se90;
+mod se99;
 mod utils;
 
 pub use crate::gershgorin::*;
 pub use crate::gmw81::ModCholeskyGMW81;
 pub use crate::se90::ModCholeskySE90;
+pub use crate::se99::ModCholeskySE99;
