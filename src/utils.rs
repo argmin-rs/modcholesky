@@ -15,7 +15,8 @@ pub fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
     let tmp = ((-(a + d) / 2.0).powi(2) - a * d + b * c).sqrt();
     let l1 = (a + d) / 2.0 + tmp;
     let l2 = (a + d) / 2.0 - tmp;
-    if l1.abs() > l2.abs() {
+    // if l1.abs() > l2.abs() {
+    if l1 > l2 {
         (l1, l2)
     } else {
         (l2, l1)

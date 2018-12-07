@@ -190,4 +190,35 @@ mod tests {
         a[(1, 2)] = 0.0;
         assert!(a.dot(&(a.t())).all_close(&res, 1e-4));
     }
+
+    // #[test]
+    // fn test_modified_cholesky_se99_difficult() {
+    //     let mut a: ndarray::Array2<f64> = ndarray::arr2(&[
+    //         [1890.3, -1705.6, -315.8, 3000.3],
+    //         [-1705.6, 1538.3, 284.9, -2706.6],
+    //         [-315.8, 284.9, 52.5, -501.2],
+    //         [3000.3, -2706.6, -501.2, 4760.8],
+    //     ]);
+    //     let mut res: ndarray::Array2<f64> = ndarray::arr2(&[
+    //         [1890.3 + 0.6649, -1705.6, -315.8, 3000.3],
+    //         [-1705.6, 1538.3 + 0.3666, 284.9, -2706.6],
+    //         [-315.8, 284.9, 52.5 + 0.6649, -501.2],
+    //         [3000.3, -2706.6, -501.2, 4760.8],
+    //     ]);
+    //     swap_rows(&mut res, 0, 3);
+    //     swap_columns(&mut res, 0, 3);
+    //
+    //     a.mod_cholesky_se99().unwrap();
+    //     // set upper triangle off diagonals to zero because its just garbage there
+    //     a[(0, 1)] = 0.0;
+    //     a[(0, 2)] = 0.0;
+    //     a[(0, 3)] = 0.0;
+    //     a[(1, 2)] = 0.0;
+    //     a[(1, 3)] = 0.0;
+    //     a[(2, 3)] = 0.0;
+    //     println!("L: {:?}", a);
+    //     println!("LLT: {:?}", a.dot(&a.t()));
+    //     println!("RES: {:?}", res);
+    //     assert!(a.dot(&(a.t())).all_close(&res, 1e-2));
+    // }
 }
