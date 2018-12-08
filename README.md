@@ -1,8 +1,12 @@
 [![Build Status](https://travis-ci.org/argmin-rs/modcholesky.svg?branch=master)](https://travis-ci.org/argmin-rs/modcholesky)
 
-# Modified Cholesky decomposition
+# Modified Cholesky decompositions (WIP)
 
-WIP
+Given a symmetric matrix A which is potentially not positive definite, a modified Cholesky algorithm obtains the Cholesky decomposition of the positive definite matrix `A + E` where `E` is symmetric and `> 0`.
+If `A` is already positive definite, then `E = 0`.
+The perturbation `E` should be as small as possible for `A + E` to be "sufficiently positive definite".
+This is used in optimization methods where indefinite Hessians can be problematic.
+
 
 [Documentation](https://argmin-rs.github.io/modcholesky/modcholesky/)
 
