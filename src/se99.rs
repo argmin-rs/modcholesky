@@ -68,7 +68,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                     swap_rows(self, j, j + max_idx);
                     swap_columns(self, j, j + max_idx);
                 }
-                let tmp = (j + 1..n).fold(std::f64::INFINITY, |acc, i| {
+                let tmp = ((j + 1)..n).fold(std::f64::INFINITY, |acc, i| {
                     let nv = self[(i, i)] - self[(i, j)].powi(2) / self[(j, j)];
                     if nv < acc {
                         nv
@@ -99,8 +99,8 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
 
         // Phase two, A not positive definite
         if !phaseone && j == n - 1 {
-            delta = -self[(n, n)] + (tau_bar * gamma).max(tau * (-self[(n, n)]) / (1.0 - tau));
-            self[(n, n)] = (self[(n, n)] + delta).sqrt();
+            delta = -self[(j, j)] + (tau_bar * gamma).max(tau * (-self[(j, j)]) / (1.0 - tau));
+            self[(j, j)] = (self[(j, j)] + delta).sqrt();
         }
 
         if !phaseone && j < n - 1 {
@@ -177,6 +177,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::utils::*;
 
     #[test]
     fn test_modified_cholesky_se99() {
