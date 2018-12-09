@@ -8,7 +8,7 @@
 //! Utility functions
 use ndarray_rand::RandomExt;
 use rand::distributions::Uniform;
-use rand::SeedableRng;
+use rand::prelude::*;
 
 pub fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
     let a = mat[(0, 0)];
@@ -97,6 +97,21 @@ pub fn random_householder(dim: usize, seed: u8) -> ndarray::Array2<f64> {
     ndarray::Array::eye(dim) - 2.0 / denom * w.dot(&w.t())
 }
 
+#[allow(dead_code)]
+pub fn random_diagonal(dim: usize, min_neg_vals: usize, seed: u8) -> ndarray::Array2<f64> {
+    let mut rng = rand_xorshift::XorShiftRng::from_seed([seed; 16]);
+    let mut w = ndarray::Array::random_using(dim, Uniform::new_inclusive(-1.0, 1.0), &mut rng);
+    let mut idxs: Vec<usize> = (0..dim).collect();
+    for _ in 0..min_neg_vals {
+        let idxidx: usize = (rng.gen::<f64>() * (idxs.len() - 1) as f64).floor() as usize;
+        let idx = idxs.remove(idxidx);
+        w[idx] = rng.gen::<f64>() - 1.0;
+    }
+    let mut out = ndarray::Array::eye(dim);
+    out.diag_mut().assign(&w);
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -169,5 +184,21 @@ mod tests {
             [-0.9999999999941971, 0.0000034067079460742278],
         ]);
         assert!(q.all_close(&res, 1e-19));
+    }
+
+    #[test]
+    fn test_random_diagonal_all_pos() {
+        let d = random_diagonal(2, 0, 128);
+        let res: ndarray::Array2<f64> =
+            ndarray::arr2(&[[0.003923416145884984, 0.0], [0.0, 0.0039215684018965025]]);
+        assert!(d.all_close(&res, 1e-19));
+    }
+
+    #[test]
+    fn test_random_diagonal_one_neg() {
+        let d = random_diagonal(2, 1, 128);
+        let res: ndarray::Array2<f64> =
+            ndarray::arr2(&[[-0.49803921207376156, 0.0], [0.0, 0.0039215684018965025]]);
+        assert!(d.all_close(&res, 1e-19));
     }
 }
