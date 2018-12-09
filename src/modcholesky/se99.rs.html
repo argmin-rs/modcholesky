@@ -222,6 +222,7 @@
 <span id="222">222</span>
 <span id="223">223</span>
 <span id="224">224</span>
+<span id="225">225</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2018 Stefan Kroboth</span>
 <span class="comment">//</span>
@@ -293,7 +294,7 @@
                     <span class="ident">swap_rows</span>(<span class="self">self</span>, <span class="ident">j</span>, <span class="ident">j</span> <span class="op">+</span> <span class="ident">max_idx</span>);
                     <span class="ident">swap_columns</span>(<span class="self">self</span>, <span class="ident">j</span>, <span class="ident">j</span> <span class="op">+</span> <span class="ident">max_idx</span>);
                 }
-                <span class="kw">let</span> <span class="ident">tmp</span> <span class="op">=</span> (<span class="ident">j</span> <span class="op">+</span> <span class="number">1</span>..<span class="ident">n</span>).<span class="ident">fold</span>(<span class="ident">std</span>::<span class="ident">f64</span>::<span class="ident">INFINITY</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="ident">i</span><span class="op">|</span> {
+                <span class="kw">let</span> <span class="ident">tmp</span> <span class="op">=</span> ((<span class="ident">j</span> <span class="op">+</span> <span class="number">1</span>)..<span class="ident">n</span>).<span class="ident">fold</span>(<span class="ident">std</span>::<span class="ident">f64</span>::<span class="ident">INFINITY</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="ident">i</span><span class="op">|</span> {
                     <span class="kw">let</span> <span class="ident">nv</span> <span class="op">=</span> <span class="self">self</span>[(<span class="ident">i</span>, <span class="ident">i</span>)] <span class="op">-</span> <span class="self">self</span>[(<span class="ident">i</span>, <span class="ident">j</span>)].<span class="ident">powi</span>(<span class="number">2</span>) <span class="op">/</span> <span class="self">self</span>[(<span class="ident">j</span>, <span class="ident">j</span>)];
                     <span class="kw">if</span> <span class="ident">nv</span> <span class="op">&lt;</span> <span class="ident">acc</span> {
                         <span class="ident">nv</span>
@@ -324,8 +325,8 @@
 
         <span class="comment">// Phase two, A not positive definite</span>
         <span class="kw">if</span> <span class="op">!</span><span class="ident">phaseone</span> <span class="op">&amp;&amp;</span> <span class="ident">j</span> <span class="op">==</span> <span class="ident">n</span> <span class="op">-</span> <span class="number">1</span> {
-            <span class="ident">delta</span> <span class="op">=</span> <span class="op">-</span><span class="self">self</span>[(<span class="ident">n</span>, <span class="ident">n</span>)] <span class="op">+</span> (<span class="ident">tau_bar</span> <span class="op">*</span> <span class="ident">gamma</span>).<span class="ident">max</span>(<span class="ident">tau</span> <span class="op">*</span> (<span class="op">-</span><span class="self">self</span>[(<span class="ident">n</span>, <span class="ident">n</span>)]) <span class="op">/</span> (<span class="number">1.0</span> <span class="op">-</span> <span class="ident">tau</span>));
-            <span class="self">self</span>[(<span class="ident">n</span>, <span class="ident">n</span>)] <span class="op">=</span> (<span class="self">self</span>[(<span class="ident">n</span>, <span class="ident">n</span>)] <span class="op">+</span> <span class="ident">delta</span>).<span class="ident">sqrt</span>();
+            <span class="ident">delta</span> <span class="op">=</span> <span class="op">-</span><span class="self">self</span>[(<span class="ident">j</span>, <span class="ident">j</span>)] <span class="op">+</span> (<span class="ident">tau_bar</span> <span class="op">*</span> <span class="ident">gamma</span>).<span class="ident">max</span>(<span class="ident">tau</span> <span class="op">*</span> (<span class="op">-</span><span class="self">self</span>[(<span class="ident">j</span>, <span class="ident">j</span>)]) <span class="op">/</span> (<span class="number">1.0</span> <span class="op">-</span> <span class="ident">tau</span>));
+            <span class="self">self</span>[(<span class="ident">j</span>, <span class="ident">j</span>)] <span class="op">=</span> (<span class="self">self</span>[(<span class="ident">j</span>, <span class="ident">j</span>)] <span class="op">+</span> <span class="ident">delta</span>).<span class="ident">sqrt</span>();
         }
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">phaseone</span> <span class="op">&amp;&amp;</span> <span class="ident">j</span> <span class="op">&lt;</span> <span class="ident">n</span> <span class="op">-</span> <span class="number">1</span> {
@@ -402,6 +403,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">utils</span>::<span class="kw-2">*</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_modified_cholesky_se99</span>() {

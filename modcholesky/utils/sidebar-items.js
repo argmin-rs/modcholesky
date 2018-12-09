@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["eigenvalues_2x2",""],["index_of_largest",""],["index_of_largest_abs",""],["random_diagonal",""],["random_householder",""],["swap_columns",""],["swap_rows",""]]});

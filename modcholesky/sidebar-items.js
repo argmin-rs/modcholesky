@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["GershgorinCircles",""],["ModCholeskyGMW81",""],["ModCholeskySE90",""],["ModCholeskySE99",""]]});
+initSidebarItems({"mod":[["utils","Utility functions"]],"trait":[["GershgorinCircles",""],["ModCholeskyGMW81",""],["ModCholeskySE90",""],["ModCholeskySE99",""]]});

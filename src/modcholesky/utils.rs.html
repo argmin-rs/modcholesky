@@ -171,6 +171,37 @@
 <span id="171">171</span>
 <span id="172">172</span>
 <span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2018 Stefan Kroboth</span>
 <span class="comment">//</span>
@@ -182,7 +213,7 @@
 <span class="doccomment">//! Utility functions</span>
 <span class="kw">use</span> <span class="ident">ndarray_rand</span>::<span class="ident">RandomExt</span>;
 <span class="kw">use</span> <span class="ident">rand</span>::<span class="ident">distributions</span>::<span class="ident">Uniform</span>;
-<span class="kw">use</span> <span class="ident">rand</span>::<span class="ident">SeedableRng</span>;
+<span class="kw">use</span> <span class="ident">rand</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eigenvalues_2x2</span>(<span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="ident">ndarray</span>::<span class="ident">ArrayView2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> (<span class="ident">f64</span>, <span class="ident">f64</span>) {
     <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">mat</span>[(<span class="number">0</span>, <span class="number">0</span>)];
@@ -271,6 +302,21 @@
     <span class="ident">ndarray</span>::<span class="ident">Array</span>::<span class="ident">eye</span>(<span class="ident">dim</span>) <span class="op">-</span> <span class="number">2.0</span> <span class="op">/</span> <span class="ident">denom</span> <span class="op">*</span> <span class="ident">w</span>.<span class="ident">dot</span>(<span class="kw-2">&amp;</span><span class="ident">w</span>.<span class="ident">t</span>())
 }
 
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">random_diagonal</span>(<span class="ident">dim</span>: <span class="ident">usize</span>, <span class="ident">min_neg_vals</span>: <span class="ident">usize</span>, <span class="ident">seed</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rng</span> <span class="op">=</span> <span class="ident">rand_xorshift</span>::<span class="ident">XorShiftRng</span>::<span class="ident">from_seed</span>([<span class="ident">seed</span>; <span class="number">16</span>]);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">Array</span>::<span class="ident">random_using</span>(<span class="ident">dim</span>, <span class="ident">Uniform</span>::<span class="ident">new_inclusive</span>(<span class="op">-</span><span class="number">1.0</span>, <span class="number">1.0</span>), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">idxs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">dim</span>).<span class="ident">collect</span>();
+    <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">min_neg_vals</span> {
+        <span class="kw">let</span> <span class="ident">idxidx</span>: <span class="ident">usize</span> <span class="op">=</span> (<span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>() <span class="op">*</span> (<span class="ident">idxs</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="ident">f64</span>).<span class="ident">floor</span>() <span class="kw">as</span> <span class="ident">usize</span>;
+        <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="ident">idxs</span>.<span class="ident">remove</span>(<span class="ident">idxidx</span>);
+        <span class="ident">w</span>[<span class="ident">idx</span>] <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>() <span class="op">-</span> <span class="number">1.0</span>;
+    }
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">Array</span>::<span class="ident">eye</span>(<span class="ident">dim</span>);
+    <span class="ident">out</span>.<span class="ident">diag_mut</span>().<span class="ident">assign</span>(<span class="kw-2">&amp;</span><span class="ident">w</span>);
+    <span class="ident">out</span>
+}
+
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
@@ -343,6 +389,22 @@
             [<span class="op">-</span><span class="number">0.9999999999941971</span>, <span class="number">0.0000034067079460742278</span>],
         ]);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">q</span>.<span class="ident">all_close</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_random_diagonal_all_pos</span>() {
+        <span class="kw">let</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">random_diagonal</span>(<span class="number">2</span>, <span class="number">0</span>, <span class="number">128</span>);
+        <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span>
+            <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">0.003923416145884984</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">0.0039215684018965025</span>]]);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">d</span>.<span class="ident">all_close</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_random_diagonal_one_neg</span>() {
+        <span class="kw">let</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">random_diagonal</span>(<span class="number">2</span>, <span class="number">1</span>, <span class="number">128</span>);
+        <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span>
+            <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="op">-</span><span class="number">0.49803921207376156</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">0.0039215684018965025</span>]]);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">d</span>.<span class="ident">all_close</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
     }
 }
 </pre></div>
