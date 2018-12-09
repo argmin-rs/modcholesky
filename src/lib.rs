@@ -9,8 +9,8 @@
 //!
 //! # TODOs
 //!
-//! * Think about `ModCholesky` struct
 //! * Be generic over element type (f64/f32/complex32/complex64)
+//! * Implement algorithms for nalgebra types
 //!
 //! # References
 //!

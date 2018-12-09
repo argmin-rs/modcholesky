@@ -6,6 +6,9 @@
 // copied, modified, or distributed except according to those terms.
 
 //! Utility functions
+use ndarray_rand::RandomExt;
+use rand::distributions::Uniform;
+use rand::SeedableRng;
 
 pub fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
     let a = mat[(0, 0)];
@@ -65,8 +68,6 @@ where
     max_idx
 }
 
-// allow dead code for now...
-#[allow(dead_code)]
 pub fn index_of_largest_abs<'a, T>(c: &ndarray::ArrayView1<T>) -> usize
 where
     <ndarray::ViewRepr<&'a T> as ndarray::Data>::Elem:
@@ -87,8 +88,19 @@ where
     max_idx
 }
 
+#[allow(dead_code)]
+pub fn random_householder(dim: usize, seed: u8) -> ndarray::Array2<f64> {
+    // dear god I just want some random numbers with a given seed....
+    let mut rng = rand_xorshift::XorShiftRng::from_seed([seed; 16]);
+    let w = ndarray::Array::random_using((dim, 1), Uniform::new_inclusive(-1.0, 1.0), &mut rng);
+    let denom = w.fold(0.0, |acc, &x: &f64| acc + x.powi(2));
+    ndarray::Array::eye(dim) - 2.0 / denom * w.dot(&w.t())
+}
+
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn test_swap_columns() {
         let mut a: ndarray::Array2<i64> = ndarray::arr2(&[[1, 2, 3], [4, 5, 6], [7, 8, 9]]);
@@ -137,8 +149,6 @@ mod tests {
             ndarray::arr2(&[[1, 2, 3, 0], [4, 2, 6, 0], [7, 8, 3, 0], [3, 4, 2, 8]]);
         let idx = super::index_of_largest(&a.diag().slice(s![j..]));
         assert_eq!(idx + j, 3);
-        // this should work, but it doesn't.
-        // assert_eq!(b, c);
     }
 
     #[test]
@@ -149,7 +159,15 @@ mod tests {
             ndarray::arr2(&[[1, 2, 3, 0], [4, 2, 6, 0], [7, 8, 3, 0], [3, 4, 2, -8]]);
         let idx = super::index_of_largest_abs(&a.diag().slice(s![j..]));
         assert_eq!(idx + j, 3);
-        // this should work, but it doesn't.
-        // assert_eq!(b, c);
+    }
+
+    #[test]
+    fn test_rand_householder() {
+        let q = random_householder(2, 84);
+        let res: ndarray::Array2<f64> = ndarray::arr2(&[
+            [-0.0000034067079459632055, -0.9999999999941971],
+            [-0.9999999999941971, 0.0000034067079460742278],
+        ]);
+        assert!(q.all_close(&res, 1e-19));
     }
 }
