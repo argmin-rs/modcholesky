@@ -177,7 +177,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::utils::*;
+    // use crate::utils::*;
 
     #[test]
     fn test_modified_cholesky_se99() {

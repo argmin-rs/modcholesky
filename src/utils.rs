@@ -98,11 +98,20 @@ pub fn random_householder(dim: usize, seed: u8) -> ndarray::Array2<f64> {
 }
 
 #[allow(dead_code)]
-pub fn random_diagonal(dim: usize, min_neg_vals: usize, seed: u8) -> ndarray::Array2<f64> {
+pub fn random_diagonal(
+    dim: usize,
+    (eig_range_min, eig_range_max): (f64, f64),
+    min_neg_eigenvalues: usize,
+    seed: u8,
+) -> ndarray::Array2<f64> {
     let mut rng = rand_xorshift::XorShiftRng::from_seed([seed; 16]);
-    let mut w = ndarray::Array::random_using(dim, Uniform::new_inclusive(-1.0, 1.0), &mut rng);
+    let mut w = ndarray::Array::random_using(
+        dim,
+        Uniform::new_inclusive(eig_range_min, eig_range_max),
+        &mut rng,
+    );
     let mut idxs: Vec<usize> = (0..dim).collect();
-    for _ in 0..min_neg_vals {
+    for _ in 0..min_neg_eigenvalues {
         let idxidx: usize = (rng.gen::<f64>() * (idxs.len() - 1) as f64).floor() as usize;
         let idx = idxs.remove(idxidx);
         w[idx] = rng.gen::<f64>() - 1.0;
@@ -188,7 +197,7 @@ mod tests {
 
     #[test]
     fn test_random_diagonal_all_pos() {
-        let d = random_diagonal(2, 0, 128);
+        let d = random_diagonal(2, (-1.0, 1.0), 0, 128);
         let res: ndarray::Array2<f64> =
             ndarray::arr2(&[[0.003923416145884984, 0.0], [0.0, 0.0039215684018965025]]);
         assert!(d.all_close(&res, 1e-19));
@@ -196,7 +205,7 @@ mod tests {
 
     #[test]
     fn test_random_diagonal_one_neg() {
-        let d = random_diagonal(2, 1, 128);
+        let d = random_diagonal(2, (-1.0, 1.0), 1, 128);
         let res: ndarray::Array2<f64> =
             ndarray::arr2(&[[-0.49803921207376156, 0.0], [0.0, 0.0039215684018965025]]);
         assert!(d.all_close(&res, 1e-19));

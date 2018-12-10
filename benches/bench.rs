@@ -69,7 +69,7 @@ mod tests {
         let q1: ndarray::Array2<f64> = random_householder(dim, 2);
         let q2: ndarray::Array2<f64> = random_householder(dim, 9);
         let q3: ndarray::Array2<f64> = random_householder(dim, 90);
-        let d: ndarray::Array2<f64> = random_diagonal(dim, 1, 23);
+        let d: ndarray::Array2<f64> = random_diagonal(dim, (-1.0, 1000.0), 1, 23);
         let tmp = q1.dot(&q2.dot(&q3));
         let mut a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
@@ -83,7 +83,7 @@ mod tests {
         let q1: ndarray::Array2<f64> = random_householder(dim, 2);
         let q2: ndarray::Array2<f64> = random_householder(dim, 9);
         let q3: ndarray::Array2<f64> = random_householder(dim, 90);
-        let d: ndarray::Array2<f64> = random_diagonal(dim, 1, 23);
+        let d: ndarray::Array2<f64> = random_diagonal(dim, (-1.0, 1000.0), 1, 23);
         let tmp = q1.dot(&q2.dot(&q3));
         let mut a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
@@ -97,7 +97,7 @@ mod tests {
         let q1: ndarray::Array2<f64> = random_householder(dim, 2);
         let q2: ndarray::Array2<f64> = random_householder(dim, 9);
         let q3: ndarray::Array2<f64> = random_householder(dim, 90);
-        let d: ndarray::Array2<f64> = random_diagonal(dim, 1, 23);
+        let d: ndarray::Array2<f64> = random_diagonal(dim, (-1.0, 1000.0), 1, 23);
         let tmp = q1.dot(&q2.dot(&q3));
         let mut a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
@@ -133,7 +133,7 @@ mod tests {
         let q1: ndarray::Array2<f64> = random_householder(dim, 2);
         let q2: ndarray::Array2<f64> = random_householder(dim, 9);
         let q3: ndarray::Array2<f64> = random_householder(dim, 90);
-        let d: ndarray::Array2<f64> = random_diagonal(dim, 1, 23);
+        let d: ndarray::Array2<f64> = random_diagonal(dim, (-1.0, 1000.0), 1, 23);
         let tmp = q1.dot(&q2.dot(&q3));
         let mut a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
@@ -147,7 +147,7 @@ mod tests {
         let q1: ndarray::Array2<f64> = random_householder(dim, 2);
         let q2: ndarray::Array2<f64> = random_householder(dim, 9);
         let q3: ndarray::Array2<f64> = random_householder(dim, 90);
-        let d: ndarray::Array2<f64> = random_diagonal(dim, 1, 23);
+        let d: ndarray::Array2<f64> = random_diagonal(dim, (-1.0, 1000.0), 1, 23);
         let tmp = q1.dot(&q2.dot(&q3));
         let mut a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
@@ -161,7 +161,7 @@ mod tests {
         let q1: ndarray::Array2<f64> = random_householder(dim, 2);
         let q2: ndarray::Array2<f64> = random_householder(dim, 9);
         let q3: ndarray::Array2<f64> = random_householder(dim, 90);
-        let d: ndarray::Array2<f64> = random_diagonal(dim, 1, 23);
+        let d: ndarray::Array2<f64> = random_diagonal(dim, (-1.0, 1000.0), 1, 23);
         let tmp = q1.dot(&q2.dot(&q3));
         let mut a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
