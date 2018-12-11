@@ -64,7 +64,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
             } else {
                 // Pivot on maximum diagonal of remaining submatrix
                 let max_idx = index_of_largest(&self.diag().slice(s![j..]));
-                if max_idx != j {
+                if max_idx != 0 {
                     swap_rows(self, j, j + max_idx);
                     swap_columns(self, j, j + max_idx);
                 }
@@ -85,7 +85,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                     self[(j, j)] = self[(j, j)].sqrt();
                     for i in (j + 1)..n {
                         self[(i, j)] /= self[(j, j)];
-                        for k in (j + 1)..(i + 1) {
+                        for k in (j + 1)..=i {
                             self[(i, k)] -= self[(i, j)] * self[(k, j)];
                         }
                     }
@@ -103,7 +103,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
             self[(j, j)] = (self[(j, j)] + delta).sqrt();
         }
 
-        if !phaseone && j < n - 1 {
+        if !phaseone && j < n - 2 {
             let k = j;
 
             // Calculate lower Gershgorin bounds of self_{k+1}
@@ -118,7 +118,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
             for j in k..(n - 2) {
                 // Pivot on maximum lower Gershgorin bound estimate
                 let max_idx = index_of_largest(&g.slice(s![j..]));
-                if max_idx != j {
+                if max_idx != 0 {
                     swap_rows(self, j, j + max_idx);
                     swap_columns(self, j, j + max_idx);
                 }
@@ -134,7 +134,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                 }
 
                 // Update Gershgorin bound estimates
-                if (self[(j, j)] - normj).abs() > 100.0 * std::f64::EPSILON {
+                if (self[(j, j)] - normj).abs() > 10.0 * std::f64::EPSILON {
                     let tmp = 1.0 - normj / self[(j, j)];
                     for i in (j + 1)..n {
                         g[i] += self[(i, j)].abs() * tmp;
@@ -220,6 +220,50 @@ mod tests {
     //     println!("L: {:?}", a);
     //     println!("LLT: {:?}", a.dot(&a.t()));
     //     println!("RES: {:?}", res);
+    //     assert!(a.dot(&(a.t())).all_close(&res, 1e-2));
+    // }
+
+    // #[test]
+    // fn test_modified_cholesky_se99_6x6() {
+    //     let mut a: ndarray::Array2<f64> = ndarray::arr2(&[
+    //         [14.8253, -6.4243, 7.8746, -1.2498, 10.2733, 10.2733],
+    //         [-6.4243, 15.1024, -1.1155, -0.2761, -8.2117, -8.2117],
+    //         [7.8746, -1.1155, 51.8519, -23.3482, 12.5902, 12.5902],
+    //         [-1.2498, -0.2761, -23.3482, 22.7967, -9.8958, -9.8958],
+    //         [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
+    //         [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
+    //     ]);
+    //     let mut res: ndarray::Array2<f64> = ndarray::arr2(&[
+    //         [14.8253, -6.4243, 7.8746, -1.2498, 10.2733, 10.2733],
+    //         [-6.4243, 15.1024, -1.1155, -0.2761, -8.2117, -8.2117],
+    //         [7.8746, -1.1155, 51.8519, -23.3482, 12.5902, 12.5902],
+    //         [-1.2498, -0.2761, -23.3482, 22.7967, -9.8958, -9.8958],
+    //         [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
+    //         [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
+    //     ]);
+    //     // swap_rows(&mut res, 0, 3);
+    //     // swap_columns(&mut res, 0, 3);
+    //
+    //     a.mod_cholesky_se99().unwrap();
+    //     // set upper triangle off diagonals to zero because its just garbage there
+    //     a[(0, 1)] = 0.0;
+    //     a[(0, 2)] = 0.0;
+    //     a[(0, 3)] = 0.0;
+    //     a[(0, 4)] = 0.0;
+    //     a[(0, 5)] = 0.0;
+    //     a[(1, 2)] = 0.0;
+    //     a[(1, 3)] = 0.0;
+    //     a[(1, 4)] = 0.0;
+    //     a[(1, 5)] = 0.0;
+    //     a[(2, 3)] = 0.0;
+    //     a[(2, 4)] = 0.0;
+    //     a[(2, 5)] = 0.0;
+    //     a[(3, 4)] = 0.0;
+    //     a[(3, 5)] = 0.0;
+    //     a[(4, 5)] = 0.0;
+    //     println!("L: {:?}", a);
+    //     println!("LLT: {:?}", a.dot(&a.t()).diag());
+    //     println!("RES: {:?}", res.diag());
     //     assert!(a.dot(&(a.t())).all_close(&res, 1e-2));
     // }
 }

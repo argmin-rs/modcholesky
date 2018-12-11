@@ -49,7 +49,7 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
         while j < n && phaseone {
             // Pivot on maximum diagonal of remaining submatrix
             let max_idx = index_of_largest(&self.diag().slice(s![j..]));
-            if max_idx != j {
+            if max_idx != 0 {
                 swap_rows(self, j, j + max_idx);
                 swap_columns(self, j, j + max_idx);
             }
@@ -97,7 +97,7 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
             for j in k..(n - 2) {
                 // Pivot on maximum lower Gershgorin bound estimate
                 let max_idx = index_of_largest(&g.slice(s![j..]));
-                if max_idx != j {
+                if max_idx != 0 {
                     swap_rows(self, j, j + max_idx);
                     swap_columns(self, j, j + max_idx);
                 }
