@@ -209,21 +209,10 @@ mod tests {
 
     #[test]
     fn test_modified_cholesky_se99() {
-        // let mut a: ndarray::Array2<f64> =
-        //     ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
         let mut a: ndarray::Array2<f64> =
-            ndarray::arr2(&[[1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [2.0, 3.0, 1.0]]);
-        println!("A: {:?}", a);
-        let res = ndarray::arr2(&[[3.0, 1.0, 2.0], [1.0, 3.2196, 3.0], [2.0, 3.0, 3.2196]]);
+            ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
+        let res = ndarray::arr2(&[[3.0, 1.0, 2.0], [1.0, 3.2197, 3.0], [2.0, 3.0, 3.2197]]);
         a.mod_cholesky_se99().unwrap();
-        // set upper triangle off diagonals to zero because its just garbage there
-        // a[(0, 1)] = 0.0;
-        // a[(0, 2)] = 0.0;
-        // a[(1, 2)] = 0.0;
-        // println!("L: {:?}", a);
-        // println!("LLT: {:?}", a.dot(&a.t()));
-        // println!("LTL: {:?}", a.t().dot(&a));
-        // println!("RES: {:?}", res);
         assert!(a.dot(&(a.t())).all_close(&res, 1e-4));
     }
 
