@@ -197,10 +197,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_modified_cholesky_se99() {
+    fn test_modified_cholesky_se99_3x3() {
         let a: ndarray::Array2<f64> =
             ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
-        let res = ndarray::arr2(&[[3.0, 1.0, 2.0], [1.0, 3.2197, 3.0], [2.0, 3.0, 3.2197]]);
+        let res_l_up: ndarray::Array2<f64> = ndarray::arr2(&[
+            [1.732050807568877, 0.5773502691896257, 1.154700538379251],
+            [0.0, 1.698920954907997, 1.37342077428181],
+            [0.0, 0.0, 0.006912871809428971],
+        ]);
+        let res = res_l_up.t().dot(&res_l_up);
         let decomp = a.mod_cholesky_se99().unwrap();
         let l = decomp.l;
         let e = decomp.e;
@@ -213,24 +218,35 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-4));
-        assert!(l.dot(&(l.t())).all_close(&res, 1e-4));
+        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
+        assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
     }
 
     #[test]
-    fn test_modified_cholesky_se99_difficult() {
+    fn test_modified_cholesky_se99_4x4() {
         let a: ndarray::Array2<f64> = ndarray::arr2(&[
             [1890.3, -1705.6, -315.8, 3000.3],
             [-1705.6, 1538.3, 284.9, -2706.6],
             [-315.8, 284.9, 52.5, -501.2],
             [3000.3, -2706.6, -501.2, 4760.8],
         ]);
-        let res: ndarray::Array2<f64> = ndarray::arr2(&[
-            [4_760.8, -501.2, -2_706.6, 3_000.3],
-            [-501.2, 52.9, 284.9, -315.8],
-            [-2_706.6, 284.9, 1_539.0, -1_705.6],
-            [3_000.3, -315.8, -1_705.6, 1_891.0],
+        let res_l_up: ndarray::Array2<f64> = ndarray::arr2(&[
+            [
+                68.99855070941707,
+                -7.263920688867382,
+                -39.22691088684848,
+                43.48352203273905,
+            ],
+            [
+                0.0,
+                0.3194133212151726,
+                -0.1288911532532789,
+                0.1905221679618937,
+            ],
+            [0.0, 0.0, 0.4447317171993393, 0.3345847412304742],
+            [0.0, 0.0, 0.0, 0.001713817545399892],
         ]);
+        let res = res_l_up.t().dot(&res_l_up);
 
         let decomp = a.mod_cholesky_se99().unwrap();
         let l = decomp.l;
@@ -244,7 +260,9 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-1));
+        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
+        // for some reason numerical problems make this test difficult, therefore the tolerance is
+        // 1e-1. Essentially the problem lies in `res` and not in `LL^T`.
         assert!(l.dot(&(l.t())).all_close(&res, 1e-1));
     }
 
@@ -258,14 +276,36 @@ mod tests {
             [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
             [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
         ]);
-        let res: ndarray::Array2<f64> = ndarray::arr2(&[
-            [51.8519, 12.5902, -1.1155, -23.3482, 7.8746, 12.5902],
-            [12.5902, 21.0656, -8.2117, -9.8958, 10.2733, 21.0656],
-            [-1.1155, -8.2117, 15.1024, -0.2761, -6.4243, -8.2117],
-            [-23.3482, -9.8958, -0.2761, 22.7967, -1.2498, -9.8958],
-            [7.8746, 10.2733, -6.4243, -1.2498, 14.8253, 10.2733],
-            [12.5902, 21.0656, -8.2117, -9.8958, 10.2733, 21.0656],
+        let res_l_up: ndarray::Array2<f64> = ndarray::arr2(&[
+            [
+                7.200826341469429,
+                1.748438221248757,
+                -0.1549127762706699,
+                -3.242433422611255,
+                1.093568935922023,
+                1.748438221248757,
+            ],
+            [
+                0.0,
+                4.243649819020943,
+                -1.871229936413708,
+                -0.9959835646917692,
+                1.970299772942301,
+                4.243649819020943,
+            ],
+            [
+                0.0,
+                0.0,
+                3.402484468269805,
+                -0.7765233465239986,
+                -0.7547450415137518,
+                0.0,
+            ],
+            [0.0, 0.0, 0.0, 3.269304777945995, 1.123276587271259, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 2.813527220044002, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 4.360427593036232e-05],
         ]);
+        let res = res_l_up.t().dot(&res_l_up);
 
         let decomp = a.mod_cholesky_se99().unwrap();
         let l = decomp.l;
@@ -279,7 +319,9 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-3));
+        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
+        // for some reason numerical problems make this test difficult, therefore the tolerance is
+        // 1e-1. Essentially the problem lies in `res` and not in `LL^T`.
         assert!(l.dot(&(l.t())).all_close(&res, 1e-3));
     }
 }

@@ -177,7 +177,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_modified_cholesky_se90() {
+    fn test_modified_cholesky_se90_3x3() {
         let a: ndarray::Array2<f64> =
             ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
         let res_l_up: ndarray::Array2<f64> = ndarray::arr2(&[
@@ -203,7 +203,7 @@ mod tests {
     }
 
     #[test]
-    fn test_modified_cholesky_se90_difficult() {
+    fn test_modified_cholesky_se90_4x4() {
         let a: ndarray::Array2<f64> = ndarray::arr2(&[
             [1890.3, -1705.6, -315.8, 3000.3],
             [-1705.6, 1538.3, 284.9, -2706.6],
@@ -299,7 +299,7 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-3));
-        assert!(l.dot(&(l.t())).all_close(&res, 1e-3));
+        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
+        assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
     }
 }
