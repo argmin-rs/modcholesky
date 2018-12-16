@@ -80,6 +80,8 @@ where
         .map(|(i, ci)| {
             let ci = num::abs(ci.clone());
             if ci > max {
+                // if (ci - max) > T::from(std::f64::EPSILON * 1000000.0).unwrap() {
+                // if (ci - max) > T::from(0.1).unwrap() {
                 max = ci;
                 max_idx = i
             }
@@ -179,8 +181,12 @@ mod tests {
     fn test_biggest_index_abs() {
         use ndarray::s;
         let j = 1;
-        let a: ndarray::Array2<i64> =
-            ndarray::arr2(&[[1, 2, 3, 0], [4, 2, 6, 0], [7, 8, 3, 0], [3, 4, 2, -8]]);
+        let a: ndarray::Array2<f64> = ndarray::arr2(&[
+            [1.0, 2.0, 3.0, 0.0],
+            [4.0, 2.0, 6.0, 0.0],
+            [7.0, 8.0, 3.0, 0.0],
+            [3.0, 4.0, 2.0, -8.0],
+        ]);
         let idx = super::index_of_largest_abs(&a.diag().slice(s![j..]));
         assert_eq!(idx + j, 3);
     }

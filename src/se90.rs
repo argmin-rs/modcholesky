@@ -42,6 +42,7 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
         let mut l = self.clone();
         let mut e = ndarray::Array2::zeros((n, n));
         let mut p = ndarray::Array2::eye(n);
+        let mut a0 = self.clone();
 
         // cbrt = cubic root
         let tau = std::f64::EPSILON.cbrt();
@@ -56,13 +57,18 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
         // Phase one, `self` potentially positive-definite
         while j < n && phaseone {
             // Pivot on maximum diagonal of remaining submatrix
-            let max_idx = index_of_largest(&l.diag().slice(s![j..]));
+            let max_idx = index_of_largest(&a0.diag().slice(s![j..]));
+            // println!("111: j: {}; oth: {}", j, j + max_idx);
+            // println!("fu: {:?}", a0.diag().slice(s![j..]));
             if max_idx != 0 {
                 swap_rows(&mut l, j, j + max_idx);
                 swap_columns(&mut l, j, j + max_idx);
+                swap_rows(&mut a0, j, j + max_idx);
+                swap_columns(&mut a0, j, j + max_idx);
                 swap_rows(&mut p, j, j + max_idx);
             }
-            // println!("111: j: {}; oth: {}", j, j + max_idx);
+            // println!("PPPPP:\n{:?}", p);
+
             let tmp = ((j + 1)..n).fold(std::f64::INFINITY, |acc, i| {
                 let nv = l[(i, i)] - l[(i, j)].powi(2) / l[(j, j)];
                 if nv < acc {
@@ -71,6 +77,7 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
                     acc
                 }
             });
+            // println!("tmp: {:?}; taugramma: {}", tmp, tau * gamma);
             if tmp < tau * gamma {
                 // Go to phase two
                 phaseone = false;
@@ -80,6 +87,7 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
                 l[(j, j)] = l[(j, j)].sqrt();
                 for i in (j + 1)..n {
                     l[(i, j)] /= l[(j, j)];
+                    l[(j, i)] /= l[(j, j)];
                     for k in (j + 1)..=i {
                         l[(i, k)] -= l[(i, j)] * l[(k, j)];
                         // TEST
@@ -108,22 +116,30 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
             for j in k..(n - 2) {
                 // Pivot on maximum lower Gershgorin bound estimate
                 let max_idx = index_of_largest(&g.slice(s![j..]));
+                println!("222: j: {}; oth: {}; g: {:?}", j, max_idx, g);
+                println!("fu: {:?}", g.diag().slice(s![j..]));
                 if max_idx != 0 {
                     swap_rows(&mut l, j, j + max_idx);
                     swap_columns(&mut l, j, j + max_idx);
+                    // swap_rows(&mut a0, j, j + max_idx);
+                    // swap_columns(&mut a0, j, j + max_idx);
                     swap_rows(&mut p, j, j + max_idx);
                 }
-                // println!("222: j: {}; oth: {}", j, j + max_idx);
 
                 // Calculate E_jj and add to diagonal
+                // println!("LLLL:\n{:?}", l);
                 let normj = l.slice(s![(j + 1).., j]).map(|x| x.abs()).scalar_sum();
+                // println!("slice: {:?}, normj: {:?}", l.slice(s![(j + 1).., j]), normj);
                 e[(j, j)] = 0.0f64
                     .max(delta_prev)
                     .max(-l[(j, j)] + normj.max(tau * gamma));
+                // println!("ejj: {}, normj: {}, ljj: {}", e[(j, j)], normj, l[(j, j)]);
+                // println!("ljj before: {}", l[(j, j)]);
                 if e[(j, j)] > 0.0 {
                     l[(j, j)] += e[(j, j)];
                     delta_prev = e[(j, j)];
                 }
+                // println!("ljj after: {}", l[(j, j)]);
 
                 // Update Gershgorin bound estimates
                 if (l[(j, j)] - normj).abs() > 1.0 * std::f64::EPSILON {
@@ -137,6 +153,7 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
                 l[(j, j)] = l[(j, j)].sqrt();
                 for i in (j + 1)..n {
                     l[(i, j)] /= l[(j, j)];
+                    l[(j, i)] /= l[(j, j)];
                     for k in (j + 1)..=i {
                         l[(i, k)] -= l[(i, j)] * l[(k, j)];
                         // TEST

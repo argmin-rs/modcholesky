@@ -92,6 +92,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                     l[(j, j)] = l[(j, j)].sqrt();
                     for i in (j + 1)..n {
                         l[(i, j)] /= l[(j, j)];
+                        l[(j, i)] /= l[(j, j)];
                         for k in (j + 1)..=i {
                             l[(i, k)] -= l[(i, j)] * l[(k, j)];
                             // TEST
@@ -156,6 +157,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                 l[(j, j)] = l[(j, j)].sqrt();
                 for i in (j + 1)..n {
                     l[(i, j)] /= l[(j, j)];
+                    l[(j, i)] /= l[(j, j)];
                     for k in (j + 1)..=i {
                         l[(i, k)] -= l[(i, j)] * l[(k, j)];
                         // TEST
