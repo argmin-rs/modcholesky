@@ -17,19 +17,8 @@
 //!   SIAM J. Optim. Vol. 9, No. 4, pp. 1135-1148, 1999
 
 use crate::utils::{eigenvalues_2x2, index_of_largest, swap_columns, swap_rows};
+use crate::Decomposition;
 use failure::{bail, Error};
-
-pub struct Decomposition<L, E, P> {
-    pub l: L,
-    pub e: E,
-    pub p: P,
-}
-
-impl<L, E, P> Decomposition<L, E, P> {
-    pub fn new(l: L, e: E, p: P) -> Self {
-        Decomposition { l, e, p }
-    }
-}
 
 pub trait ModCholeskySE99
 where
@@ -176,7 +165,6 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
             }
 
             // final 2x2 submatrix
-
             let (lhi, llo) = eigenvalues_2x2(&l.slice(s![(n - 2).., (n - 2)..]));
             e[(n - 2, n - 2)] = 0.0f64
                 .max(-llo + (tau_bar * gamma).max(tau * (lhi - llo) / (1.0 - tau)))
@@ -204,7 +192,6 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    // use crate::utils::*;
 
     #[test]
     fn test_modified_cholesky_se99() {

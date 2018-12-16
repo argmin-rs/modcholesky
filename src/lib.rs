@@ -51,3 +51,15 @@ pub use crate::gershgorin::*;
 pub use crate::gmw81::ModCholeskyGMW81;
 pub use crate::se90::ModCholeskySE90;
 pub use crate::se99::ModCholeskySE99;
+
+pub struct Decomposition<L, E, P> {
+    pub l: L,
+    pub e: E,
+    pub p: P,
+}
+
+impl<L, E, P> Decomposition<L, E, P> {
+    pub fn new(l: L, e: E, p: P) -> Self {
+        Decomposition { l, e, p }
+    }
+}
