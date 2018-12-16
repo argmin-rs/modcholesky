@@ -133,6 +133,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                     swap_rows(&mut l, j, j + max_idx);
                     swap_columns(&mut l, j, j + max_idx);
                     swap_rows(&mut p, j, j + max_idx);
+                    g.swap(j, j + max_idx);
                 }
 
                 // Calculate E_jj and add to diagonal

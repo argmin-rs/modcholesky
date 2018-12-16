@@ -42,7 +42,6 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
         let mut l = self.clone();
         let mut e = ndarray::Array2::zeros((n, n));
         let mut p = ndarray::Array2::eye(n);
-        let mut a0 = self.clone();
 
         // cbrt = cubic root
         let tau = std::f64::EPSILON.cbrt();
@@ -57,17 +56,12 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
         // Phase one, `self` potentially positive-definite
         while j < n && phaseone {
             // Pivot on maximum diagonal of remaining submatrix
-            let max_idx = index_of_largest(&a0.diag().slice(s![j..]));
-            // println!("111: j: {}; oth: {}", j, j + max_idx);
-            // println!("fu: {:?}", a0.diag().slice(s![j..]));
+            let max_idx = index_of_largest(&l.diag().slice(s![j..]));
             if max_idx != 0 {
                 swap_rows(&mut l, j, j + max_idx);
                 swap_columns(&mut l, j, j + max_idx);
-                swap_rows(&mut a0, j, j + max_idx);
-                swap_columns(&mut a0, j, j + max_idx);
                 swap_rows(&mut p, j, j + max_idx);
             }
-            // println!("PPPPP:\n{:?}", p);
 
             let tmp = ((j + 1)..n).fold(std::f64::INFINITY, |acc, i| {
                 let nv = l[(i, i)] - l[(i, j)].powi(2) / l[(j, j)];
@@ -77,7 +71,6 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
                     acc
                 }
             });
-            // println!("tmp: {:?}; taugramma: {}", tmp, tau * gamma);
             if tmp < tau * gamma {
                 // Go to phase two
                 phaseone = false;
@@ -116,30 +109,22 @@ impl ModCholeskySE90 for ndarray::Array2<f64> {
             for j in k..(n - 2) {
                 // Pivot on maximum lower Gershgorin bound estimate
                 let max_idx = index_of_largest(&g.slice(s![j..]));
-                println!("222: j: {}; oth: {}; g: {:?}", j, max_idx, g);
-                println!("fu: {:?}", g.diag().slice(s![j..]));
                 if max_idx != 0 {
                     swap_rows(&mut l, j, j + max_idx);
                     swap_columns(&mut l, j, j + max_idx);
-                    // swap_rows(&mut a0, j, j + max_idx);
-                    // swap_columns(&mut a0, j, j + max_idx);
                     swap_rows(&mut p, j, j + max_idx);
+                    g.swap(j, j + max_idx);
                 }
 
                 // Calculate E_jj and add to diagonal
-                // println!("LLLL:\n{:?}", l);
                 let normj = l.slice(s![(j + 1).., j]).map(|x| x.abs()).scalar_sum();
-                // println!("slice: {:?}, normj: {:?}", l.slice(s![(j + 1).., j]), normj);
                 e[(j, j)] = 0.0f64
                     .max(delta_prev)
                     .max(-l[(j, j)] + normj.max(tau * gamma));
-                // println!("ejj: {}, normj: {}, ljj: {}", e[(j, j)], normj, l[(j, j)]);
-                // println!("ljj before: {}", l[(j, j)]);
                 if e[(j, j)] > 0.0 {
                     l[(j, j)] += e[(j, j)];
                     delta_prev = e[(j, j)];
                 }
-                // println!("ljj after: {}", l[(j, j)]);
 
                 // Update Gershgorin bound estimates
                 if (l[(j, j)] - normj).abs() > 1.0 * std::f64::EPSILON {
@@ -254,67 +239,67 @@ mod tests {
         assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
     }
 
-    // #[test]
-    // fn test_modified_cholesky_se90_6x6() {
-    //     let a: ndarray::Array2<f64> = ndarray::arr2(&[
-    //         [14.8253, -6.4243, 7.8746, -1.2498, 10.2733, 10.2733],
-    //         [-6.4243, 15.1024, -1.1155, -0.2761, -8.2117, -8.2117],
-    //         [7.8746, -1.1155, 51.8519, -23.3482, 12.5902, 12.5902],
-    //         [-1.2498, -0.2761, -23.3482, 22.7967, -9.8958, -9.8958],
-    //         [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
-    //         [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
-    //     ]);
-    //     let res_l_up: ndarray::Array2<f64> = ndarray::arr2(&[
-    //         [
-    //             7.200826341469429,
-    //             -3.242433422611255,
-    //             -0.1549127762706699,
-    //             1.093568935922023,
-    //             1.748438221248757,
-    //             1.748438221248757,
-    //         ],
-    //         [
-    //             0.0,
-    //             3.504757552232888,
-    //             -0.2220964936286686,
-    //             0.6551164905259115,
-    //             -1.205962298692896,
-    //             -1.205962298692896,
-    //         ],
-    //         [
-    //             0.0,
-    //             0.0,
-    //             4.746236644186862,
-    //             -1.287207862277906,
-    //             -1.729514390954478,
-    //             -1.729514390954478,
-    //         ],
-    //         [
-    //             0.0,
-    //             0.0,
-    //             0.0,
-    //             4.363600851232103,
-    //             1.587006643784825,
-    //             1.587006643784825,
-    //         ],
-    //         [0.0, 0.0, 0.0, 0.0, 4.306053379607389, 2.564856408184844],
-    //         [0.0, 0.0, 0.0, 0.0, 0.0, 3.458844794641899],
-    //     ]);
-    //     let res = res_l_up.t().dot(&res_l_up);
-    //
-    //     let decomp = a.mod_cholesky_se90().unwrap();
-    //     let l = decomp.l;
-    //     let e = decomp.e;
-    //     let p = decomp.p;
-    //     let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
-    //     println!("A:\n{:?}", a);
-    //     println!("L:\n{:?}", l);
-    //     println!("E:\n{:?}", e);
-    //     println!("P:\n{:?}", p);
-    //     println!("LLT:\n{:?}", l.dot(&l.t()));
-    //     println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
-    //     println!("RES:\n{:?}", res);
-    //     // assert!(paptpept.all_close(&l.dot(&l.t()), 1e-3));
-    //     assert!(l.dot(&(l.t())).all_close(&res, 1e-3));
-    // }
+    #[test]
+    fn test_modified_cholesky_se90_6x6() {
+        let a: ndarray::Array2<f64> = ndarray::arr2(&[
+            [14.8253, -6.4243, 7.8746, -1.2498, 10.2733, 10.2733],
+            [-6.4243, 15.1024, -1.1155, -0.2761, -8.2117, -8.2117],
+            [7.8746, -1.1155, 51.8519, -23.3482, 12.5902, 12.5902],
+            [-1.2498, -0.2761, -23.3482, 22.7967, -9.8958, -9.8958],
+            [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
+            [10.2733, -8.2117, 12.5902, -9.8958, 21.0656, 21.0656],
+        ]);
+        let res_l_up: ndarray::Array2<f64> = ndarray::arr2(&[
+            [
+                7.200826341469429,
+                -3.242433422611255,
+                -0.1549127762706699,
+                1.093568935922023,
+                1.748438221248757,
+                1.748438221248757,
+            ],
+            [
+                0.0,
+                3.504757552232888,
+                -0.2220964936286686,
+                0.6551164905259115,
+                -1.205962298692896,
+                -1.205962298692896,
+            ],
+            [
+                0.0,
+                0.0,
+                4.746236644186862,
+                -1.287207862277906,
+                -1.729514390954478,
+                -1.729514390954478,
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                4.363600851232103,
+                1.587006643784825,
+                1.587006643784825,
+            ],
+            [0.0, 0.0, 0.0, 0.0, 4.306053379607389, 2.564856408184844],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 3.458844794641899],
+        ]);
+        let res = res_l_up.t().dot(&res_l_up);
+
+        let decomp = a.mod_cholesky_se90().unwrap();
+        let l = decomp.l;
+        let e = decomp.e;
+        let p = decomp.p;
+        let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
+        // println!("A:\n{:?}", a);
+        // println!("L:\n{:?}", l);
+        // println!("E:\n{:?}", e);
+        // println!("P:\n{:?}", p);
+        // println!("LLT:\n{:?}", l.dot(&l.t()));
+        // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
+        // println!("RES:\n{:?}", res);
+        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-3));
+        assert!(l.dot(&(l.t())).all_close(&res, 1e-3));
+    }
 }
