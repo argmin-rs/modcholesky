@@ -155,7 +155,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                 // Perform jth iteration of factorization
                 l[(j, j)] = l[(j, j)].sqrt();
                 for i in (j + 1)..n {
-                    l[(i, j)] = l[(i, j)] / l[(j, j)];
+                    l[(i, j)] /= l[(j, j)];
                     for k in (j + 1)..=i {
                         l[(i, k)] -= l[(i, j)] * l[(k, j)];
                         // TEST
@@ -170,18 +170,18 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                 .max(-llo + (tau_bar * gamma).max(tau * (lhi - llo) / (1.0 - tau)))
                 .max(delta_prev);
             e[(n - 1, n - 1)] = e[(n - 2, n - 2)];
-            if e[(j, j)] > 0.0 {
+            if e[(n - 2, n - 2)] > 0.0 {
                 l[(n - 2, n - 2)] += e[(n - 2, n - 2)];
                 l[(n - 1, n - 1)] += e[(n - 1, n - 1)];
                 // delta_prev = delta;
             }
             l[(n - 2, n - 2)] = l[(n - 2, n - 2)].sqrt();
-            l[(n - 1, n - 2)] = l[(n - 1, n - 2)] / l[(n - 2, n - 2)];
+            l[(n - 1, n - 2)] /= l[(n - 2, n - 2)];
             l[(n - 1, n - 1)] = (l[(n - 1, n - 1)] - l[(n - 1, n - 2)].powi(2)).sqrt();
         }
 
         // Make lower triangular
-        for i in 0..n {
+        for i in 0..(n - 1) {
             l.slice_mut(s![i, (i + 1)..]).fill(0.0);
         }
 
