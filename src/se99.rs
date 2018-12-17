@@ -197,7 +197,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_modified_cholesky_se99_3x3() {
+    fn test_modchol_se99_3x3() {
         let a: ndarray::Array2<f64> =
             ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
         let res_l_up: ndarray::Array2<f64> = ndarray::arr2(&[
@@ -223,7 +223,7 @@ mod tests {
     }
 
     #[test]
-    fn test_modified_cholesky_se99_4x4() {
+    fn test_modchol_se99_4x4() {
         let a: ndarray::Array2<f64> = ndarray::arr2(&[
             [1890.3, -1705.6, -315.8, 3000.3],
             [-1705.6, 1538.3, 284.9, -2706.6],
@@ -267,7 +267,7 @@ mod tests {
     }
 
     #[test]
-    fn test_modified_cholesky_se99_6x6() {
+    fn test_modchol_se99_6x6() {
         let a: ndarray::Array2<f64> = ndarray::arr2(&[
             [14.8253, -6.4243, 7.8746, -1.2498, 10.2733, 10.2733],
             [-6.4243, 15.1024, -1.1155, -0.2761, -8.2117, -8.2117],
