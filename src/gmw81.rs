@@ -19,26 +19,31 @@
 //!   Springer. ISBN 0-387-30303-0. 2006.
 
 use crate::utils::{index_of_largest_abs, swap_columns, swap_rows};
+use crate::Decomposition;
 use failure::Error;
 
 pub trait ModCholeskyGMW81
 where
     Self: Sized,
 {
-    fn mod_cholesky_gmw81(&mut self) -> Result<(), Error>;
+    fn mod_cholesky_gmw81(&self) -> Result<Decomposition<Self, Self, Self>, Error>;
 }
 
 impl ModCholeskyGMW81 for ndarray::Array2<f64> {
     /// Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
-    fn mod_cholesky_gmw81(&mut self) -> Result<(), Error> {
+    fn mod_cholesky_gmw81(&self) -> Result<Decomposition<Self, Self, Self>, Error> {
         use ndarray::s;
         debug_assert!(self.is_square());
         let n = self.raw_dim()[0];
-        let a_diag = self.diag();
+        let mut l = self.clone();
+        let mut p = ndarray::Array2::eye(n);
+        let mut e = ndarray::Array2::zeros((n, n));
 
-        let diag_max = a_diag.fold(0.0, |acc, x| if x.abs() > acc { x.abs() } else { acc });
+        let diag_max = l
+            .diag()
+            .fold(0.0, |acc, x| if x.abs() > acc { x.abs() } else { acc });
         let off_diag_max =
-            self.indexed_iter()
+            l.indexed_iter()
                 .filter(|((i, j), _)| i != j)
                 .fold(
                     0.0,
@@ -52,20 +57,23 @@ impl ModCholeskyGMW81 for ndarray::Array2<f64> {
         .sqrt();
 
         let mut c: ndarray::Array2<f64> = ndarray::Array2::zeros(self.raw_dim());
-        c.diag_mut().assign(&a_diag);
+        c.diag_mut().assign(&l.diag());
         let mut d: ndarray::Array1<f64> = ndarray::Array::zeros(n);
 
         for j in 0..n {
             let max_idx = index_of_largest_abs(&c.diag().slice(s![j..]));
-            swap_rows(&mut c, j, j + max_idx);
-            swap_columns(&mut c, j, j + max_idx);
+            if max_idx != 0 {
+                swap_rows(&mut c, j, j + max_idx);
+                swap_columns(&mut c, j, j + max_idx);
+                swap_rows(&mut p, j, j + max_idx);
+            }
             for s in 0..j {
-                self[(j, s)] = c[(j, s)] / d[s];
+                l[(j, s)] = c[(j, s)] / d[s];
             }
 
             for i in j..n {
                 c[(i, j)] =
-                    self[(i, j)] - (&self.slice(s![j, 0..j]) * &c.slice(s![i, 0..j])).scalar_sum();
+                    l[(i, j)] - (&l.slice(s![j, 0..j]) * &c.slice(s![i, 0..j])).scalar_sum();
             }
 
             let theta = if j < (n - 1) {
@@ -91,17 +99,23 @@ impl ModCholeskyGMW81 for ndarray::Array2<f64> {
                     c[(i, i)] -= c2 / d[j];
                 }
             }
+            e[(j, j)] = d[j] - c[(j, j)];
         }
         let mut dout = ndarray::Array2::eye(n);
         dout.diag_mut()
             .assign(&(d.iter().map(|x| x.sqrt()).collect::<ndarray::Array1<f64>>()));
 
         // Set diagonal to ones
-        self.diag_mut().assign(&ndarray::Array1::ones(n));
+        l.diag_mut().assign(&ndarray::Array1::ones(n));
+
+        // Make lower triangular
+        for i in 0..(n - 1) {
+            l.slice_mut(s![i, (i + 1)..]).fill(0.0);
+        }
 
         // multiply with dout and return
-        *self = self.dot(&dout);
-        Ok(())
+        l = l.dot(&dout);
+        Ok(Decomposition::new(l.clone(), p.dot(&e.dot(&p.t())), p))
     }
 }
 
@@ -109,23 +123,25 @@ impl ModCholeskyGMW81 for ndarray::Array2<f64> {
 mod tests {
     use super::*;
     #[test]
-    fn test_modified_cholesky() {
-        let mut a: ndarray::Array2<f64> =
+    fn test_modchol_gmw81_3x3() {
+        let a: ndarray::Array2<f64> =
             ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, -0.004]]);
-        a.mod_cholesky_gmw81().unwrap();
-        // set upper triangle off diagonals to zero because its just garbage there
-        a[(0, 1)] = 0.0;
-        a[(0, 2)] = 0.0;
-        a[(1, 2)] = 0.0;
-        let f = a.dot(&(a.t()));
         let res: ndarray::Array2<f64> =
             ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, 3.004]]);
-        assert!(f.all_close(&res, 1e-9));
-        // let dsqrt = d.map(|x| x.sqrt());
-        // let m = l.dot(&dsqrt);
-        // println!("l: {:?}", l);
-        // println!("d: {:?}", d);
-        // println!("f: {:?}", f);
-        // println!("m: {:?}", m);
+
+        let decomp = a.mod_cholesky_gmw81().unwrap();
+        let l = decomp.l;
+        // let e = decomp.e;
+        // let p = decomp.p;
+        // let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
+        // println!("A:\n{:?}", a);
+        // println!("L:\n{:?}", l);
+        // println!("E:\n{:?}", e);
+        // println!("P:\n{:?}", p);
+        // println!("LLT:\n{:?}", l.dot(&l.t()));
+        // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
+        // println!("RES:\n{:?}", res);
+        // assert!(paptpept.all_close(&l.dot(&l.t()), 1e-2));
+        assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
     }
 }
