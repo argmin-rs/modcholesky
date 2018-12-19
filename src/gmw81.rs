@@ -29,23 +29,22 @@ where
     fn mod_cholesky_gmw81(&self) -> Result<Decomposition<L, E, P>, Error>;
 }
 
-impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array2<f64>, ndarray::Array1<usize>>
+impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>
     for ndarray::Array2<f64>
 {
     /// Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
     fn mod_cholesky_gmw81(
         &self,
     ) -> Result<
-        Decomposition<ndarray::Array2<f64>, ndarray::Array2<f64>, ndarray::Array1<usize>>,
+        Decomposition<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>,
         Error,
     > {
         use ndarray::s;
         debug_assert!(self.is_square());
         let n = self.raw_dim()[0];
         let mut l = self.clone();
-        // let mut p = ndarray::Array2::eye(n);
         let mut p = ndarray::Array1::from_iter(0..n);
-        let mut e = ndarray::Array2::zeros((n, n));
+        let mut e = ndarray::Array1::zeros(n);
 
         let diag_max = l
             .diag()
@@ -110,7 +109,7 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array2<f64>, ndarray::Array
                     c[(i, i)] -= c2 / d[j];
                 }
             }
-            e[(j, j)] = d[j] - c[(j, j)];
+            e[j] = d[j] - c[(j, j)];
         }
         let mut dout = ndarray::Array2::eye(n);
         dout.diag_mut()
@@ -127,9 +126,9 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array2<f64>, ndarray::Array
         // multiply with dout and return
         l = l.dot(&dout);
 
-        let wtf: ndarray::Array1<f64> = e.diag().iter().cloned().collect();
+        let ec = e.clone();
         for i in 0..n {
-            e[(p[i], p[i])] = wtf[i];
+            e[p[i]] = ec[i];
         }
 
         Ok(Decomposition::new(l.clone(), e, p))
@@ -150,7 +149,7 @@ mod tests {
 
         let decomp = a.mod_cholesky_gmw81().unwrap();
         let l = decomp.l;
-        let e = decomp.e;
+        let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let res = p.dot(&res.dot(&p.t()));
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
@@ -177,7 +176,7 @@ mod tests {
         let res = res_l_up.t().dot(&res_l_up);
         let decomp = a.mod_cholesky_gmw81().unwrap();
         let l = decomp.l;
-        let e = decomp.e;
+        let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
@@ -219,7 +218,7 @@ mod tests {
 
         let decomp = a.mod_cholesky_gmw81().unwrap();
         let l = decomp.l;
-        let e = decomp.e;
+        let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
@@ -276,7 +275,7 @@ mod tests {
 
         let decomp = a.mod_cholesky_gmw81().unwrap();
         let l = decomp.l;
-        let e = decomp.e;
+        let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);

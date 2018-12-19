@@ -99,6 +99,17 @@ pub fn index_to_permutation_mat(idxs: &[usize]) -> ndarray::Array2<f64> {
     mat
 }
 
+pub fn diag_mat_from_arr<T>(arr: &[T]) -> ndarray::Array2<T>
+where
+    T: Clone + num::traits::identities::Zero,
+{
+    let n = arr.len();
+    let mut mat: ndarray::Array2<T> = ndarray::Array2::zeros((n, n));
+    let diag: ndarray::Array1<T> = ndarray::Array1::from_iter(arr.into_iter().cloned());
+    mat.diag_mut().assign(&diag);
+    mat
+}
+
 #[allow(dead_code)]
 pub fn random_householder(dim: usize, seed: u8) -> ndarray::Array2<f64> {
     // dear god I just want some random numbers with a given seed....
