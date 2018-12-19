@@ -95,6 +95,7 @@ where
     max_idx
 }
 
+/// Returns the permutation matrix for a vector of permuted indices
 pub fn index_to_permutation_mat(idxs: &[usize]) -> ndarray::Array2<f64> {
     let n = idxs.len();
     let mut mat = ndarray::Array2::zeros((n, n));
@@ -104,6 +105,7 @@ pub fn index_to_permutation_mat(idxs: &[usize]) -> ndarray::Array2<f64> {
     mat
 }
 
+/// Builds a diagonal matrix from a 1D slice
 pub fn diag_mat_from_arr<T>(arr: &[T]) -> ndarray::Array2<T>
 where
     T: Clone + num::traits::identities::Zero,
@@ -115,7 +117,7 @@ where
     mat
 }
 
-#[allow(dead_code)]
+/// Returns a random Householder matrix of dimension `dim` and with seed `seed`.
 pub fn random_householder(dim: usize, seed: u8) -> ndarray::Array2<f64> {
     // dear god I just want some random numbers with a given seed....
     let mut rng = rand_xorshift::XorShiftRng::from_seed([seed; 16]);
@@ -124,7 +126,9 @@ pub fn random_householder(dim: usize, seed: u8) -> ndarray::Array2<f64> {
     ndarray::Array::eye(dim) - 2.0 / denom * w.dot(&w.t())
 }
 
-#[allow(dead_code)]
+/// Returns a random diagonal matrix with Eigenvalues inbetween `eig_range_min` and
+/// `eig_range_max`. The minimum number of negative eigenvalues can be specified with
+/// `min_neg_eigenvalues`. Takes a `seed for random values`.
 pub fn random_diagonal(
     dim: usize,
     (eig_range_min, eig_range_max): (f64, f64),

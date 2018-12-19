@@ -5,27 +5,27 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-//! Schnabel & Eskow algorithm (1990)
-//!
-//! # References
-//!
-//! * Semyon Aranovich Gershgorin.
-//!   Über die Abgrenzung der Eigenwerte einer Matrix.
-//!   Izv. Akad. Nauk. USSR Otd. Fiz.-Mat. Nauk, 6: 749–754, 1931.
-//! * Robert B. Schnabel and Elizabeth Eskow.
-//!   A new modified Cholesky factorization.
-//!   SIAM J. Sci. Stat. Comput. Vol. 11, No. 6, pp. 1136-1158, November 1990
-//! * Elizabeth Eskow and Robert B. Schnabel.
-//!   Algorithm 695: Software for a new modified Cholesky factorization.
-//!   ACM Trans. Math. Softw. Vol. 17, p. 306-312, 1991
-
 use crate::utils::{eigenvalues_2x2, index_of_largest, swap_columns, swap_rows};
 use crate::Decomposition;
 
+/// Schnabel & Eskow algorithm (1990)
+///
+/// # References
+///
+/// * Semyon Aranovich Gershgorin.
+///   Über die Abgrenzung der Eigenwerte einer Matrix.
+///   Izv. Akad. Nauk. USSR Otd. Fiz.-Mat. Nauk, 6: 749–754, 1931.
+/// * Robert B. Schnabel and Elizabeth Eskow.
+///   A new modified Cholesky factorization.
+///   SIAM J. Sci. Stat. Comput. Vol. 11, No. 6, pp. 1136-1158, November 1990
+/// * Elizabeth Eskow and Robert B. Schnabel.
+///   Algorithm 695: Software for a new modified Cholesky factorization.
+///   ACM Trans. Math. Softw. Vol. 17, p. 306-312, 1991
 pub trait ModCholeskySE90<L, E, P>
 where
     Self: Sized,
 {
+    /// Computes the modified Cholesky decomposition with the SE90 algorithm
     fn mod_cholesky_se90(&self) -> Decomposition<L, E, P> {
         panic!("Not implemented!")
     }
@@ -34,6 +34,7 @@ where
 impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>
     for ndarray::Array2<f64>
 {
+    /// Computes the modified Cholesky decomposition with the SE90 algorithm
     fn mod_cholesky_se90(
         &self,
     ) -> Decomposition<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>> {

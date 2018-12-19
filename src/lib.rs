@@ -7,6 +7,57 @@
 
 //! Modified Cholesky decompositions
 //!
+//! Given a symmetric matrix A which is potentially not positive definite, a modified Cholesky
+//! algorithm obtains the Cholesky decomposition `LL^T` of the positive definite matrix
+//! `P(A + E)P^T` where `E` is symmetric and `> 0`, `P` is a permutation matrix and `L` is lower
+//! triangular.
+//! If `A` is already positive definite, then `E = 0`.
+//! The perturbation `E` should be as small as possible for `A + E` to be "sufficiently positive
+//! definite".
+//! This is used in optimization methods where indefinite Hessians can be problematic.
+//!
+//! This crate implements the algorithms by Gill, Murray and Wright
+//! ([GMW81](trait.ModCholeskyGMW81.html)) and Schnabel and Eskow
+//! ([SE90](trait.ModCholeskySE90.html) and [SE99](trait.ModCholeskySE99.html)).
+//! All algorithms are currently based on `ndarray` but will also be implemented for `nalgebra` in
+//! the future.
+//!
+//! # Example
+//!
+//! ```rust
+//! # use modcholesky::utils::{diag_mat_from_arr, index_to_permutation_mat};
+//! use modcholesky::ModCholeskySE99;
+//!
+//! let a = ndarray::arr2(&[[1.0, 1.0, 2.0],
+//!                         [1.0, 1.0, 3.0],
+//!                         [2.0, 3.0, 1.0]]);
+//!
+//! // Perform modified Cholesky decomposition
+//! // The `Decomposition` struct holds L, E and P
+//! let decomp = a.mod_cholesky_se99();
+//!
+//! println!("L:\n{:?}", decomp.l);
+//! println!("E:\n{:?}", decomp.e);
+//! println!("P:\n{:?}", decomp.p);
+//!
+//! # let l = decomp.l;
+//! #
+//! # let res_l: ndarray::Array2<f64> = ndarray::arr2(&[
+//! #     [1.732050807568877, 0.0, 0.0],
+//! #     [0.5773502691896257, 1.698920954907997, 0.0],
+//! #     [1.154700538379251, 1.37342077428181, 0.006912871809428971],
+//! # ]);
+//! # let res = res_l.dot(&res_l.t());
+//! #
+//! # assert!(res_l.all_close(&l, 1e-12));
+//! #
+//! # let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
+//! # let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
+//! # let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
+//! # assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
+//! # assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
+//! ```
+//!
 //! # TODOs
 //!
 //! * Be generic over element type (f64/f32/complex32/complex64)

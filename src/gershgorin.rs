@@ -5,19 +5,20 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-//! Gershgorin circles
-//!
-//! # References
-//!
-//! * Semyon Aranovich Gerschgorin.
-//!   Über die Abgrenzung der Eigenwerte einer Matrix.
-//!   Izv. Akad. Nauk. USSR Otd. Fiz.-Mat. Nauk, 6: 749–754, 1931.
-
+/// Gershgorin circles
+///
+/// # References
+///
+/// * Semyon Aranovich Gerschgorin.
+///   Über die Abgrenzung der Eigenwerte einer Matrix.
+///   Izv. Akad. Nauk. USSR Otd. Fiz.-Mat. Nauk, 6: 749–754, 1931.
 pub trait GershgorinCircles {
+    /// Computes the Gershgorin Circles of a matrix
     fn gershgorin_circles(&self) -> Vec<(f64, f64)>;
 }
 
 impl GershgorinCircles for ndarray::Array2<f64> {
+    /// Computes the Gershgorin Circles of a matrix
     fn gershgorin_circles(&self) -> Vec<(f64, f64)> {
         debug_assert!(self.is_square());
         // use ndarray::s;

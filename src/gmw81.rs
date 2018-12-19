@@ -5,26 +5,26 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-//! Gill, Murray and Wright (1981)
-//!
-//! Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
-//!
-//! # References
-//!
-//! * Philip E. Gill, Walter Murray and Margaret H. Wright.
-//!   Practical Optimization.
-//!   Emerald Group Publishing Limited. ISBN 978-0122839528. 1982
-//! * Jorge Nocedal and Stephen J. Wright.
-//!   Numerical Optimization.
-//!   Springer. ISBN 0-387-30303-0. 2006.
-
 use crate::utils::{index_of_largest_abs, swap_columns, swap_rows};
 use crate::Decomposition;
 
+/// Gill, Murray and Wright (1981)
+///
+/// Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
+///
+/// # References
+///
+/// * Philip E. Gill, Walter Murray and Margaret H. Wright.
+///   Practical Optimization.
+///   Emerald Group Publishing Limited. ISBN 978-0122839528. 1982
+/// * Jorge Nocedal and Stephen J. Wright.
+///   Numerical Optimization.
+///   Springer. ISBN 0-387-30303-0. 2006.
 pub trait ModCholeskyGMW81<L, E, P>
 where
     Self: Sized,
 {
+    /// Computes the modified Cholesky decomposition with the GMW81 algorithm
     fn mod_cholesky_gmw81(&self) -> Decomposition<L, E, P> {
         panic!("Not implemented!")
     }
@@ -33,7 +33,8 @@ where
 impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>
     for ndarray::Array2<f64>
 {
-    /// Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
+    /// Computes the modified Cholesky decomposition with the GMW81 algorithm.
+    /// Based on algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright.
     fn mod_cholesky_gmw81(
         &self,
     ) -> Decomposition<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>> {
