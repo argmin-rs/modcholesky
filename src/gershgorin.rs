@@ -13,14 +13,12 @@
 //!   Über die Abgrenzung der Eigenwerte einer Matrix.
 //!   Izv. Akad. Nauk. USSR Otd. Fiz.-Mat. Nauk, 6: 749–754, 1931.
 
-use failure::Error;
-
 pub trait GershgorinCircles {
-    fn gershgorin_circles(&self) -> Result<Vec<(f64, f64)>, Error>;
+    fn gershgorin_circles(&self) -> Vec<(f64, f64)>;
 }
 
 impl GershgorinCircles for ndarray::Array2<f64> {
-    fn gershgorin_circles(&self) -> Result<Vec<(f64, f64)>, Error> {
+    fn gershgorin_circles(&self) -> Vec<(f64, f64)> {
         debug_assert!(self.is_square());
         // use ndarray::s;
         let n = self.raw_dim()[0];
@@ -39,7 +37,7 @@ impl GershgorinCircles for ndarray::Array2<f64> {
             }
             out.push((aii, ri.min(ci)));
         }
-        Ok(out)
+        out
     }
 }
 
@@ -58,7 +56,7 @@ mod tests {
         // let b: Vec<(f64, f64)> = vec![(10.0, 2.0), (8.0, 0.6), (2.0, 3.0), (-11.0, 3.0)];
         // with considering the columns
         let b: Vec<(f64, f64)> = vec![(10.0, 2.0), (8.0, 0.6), (2.0, 1.2), (-11.0, 2.2)];
-        let res = a.gershgorin_circles().unwrap();
+        let res = a.gershgorin_circles();
         b.iter()
             .zip(res.iter())
             .map(|((x1, y1), (x2, y2))| {

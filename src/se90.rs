@@ -21,14 +21,13 @@
 
 use crate::utils::{eigenvalues_2x2, index_of_largest, swap_columns, swap_rows};
 use crate::Decomposition;
-use failure::{bail, Error};
 
 pub trait ModCholeskySE90<L, E, P>
 where
     Self: Sized,
 {
-    fn mod_cholesky_se90(&self) -> Result<Decomposition<L, E, P>, Error> {
-        bail!("Not implemented!")
+    fn mod_cholesky_se90(&self) -> Decomposition<L, E, P> {
+        panic!("Not implemented!")
     }
 }
 
@@ -37,10 +36,7 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
 {
     fn mod_cholesky_se90(
         &self,
-    ) -> Result<
-        Decomposition<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>,
-        Error,
-    > {
+    ) -> Decomposition<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>> {
         assert!(self.is_square());
         use ndarray::s;
 
@@ -181,7 +177,7 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
             e[p[i]] = ec[i];
         }
 
-        Ok(Decomposition::new(l, e, p))
+        Decomposition::new(l, e, p)
     }
 }
 
@@ -200,7 +196,7 @@ mod tests {
             [0.0, 0.0, 0.006912871809428971],
         ]);
         let res = res_l_up.t().dot(&res_l_up);
-        let decomp = a.mod_cholesky_se90().unwrap();
+        let decomp = a.mod_cholesky_se90();
         let l = decomp.l;
         let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
@@ -237,7 +233,7 @@ mod tests {
         ]);
         let res = res_l_up.t().dot(&res_l_up);
 
-        let decomp = a.mod_cholesky_se90().unwrap();
+        let decomp = a.mod_cholesky_se90();
         let l = decomp.l;
         let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
@@ -301,7 +297,7 @@ mod tests {
         ]);
         let res = res_l_up.t().dot(&res_l_up);
 
-        let decomp = a.mod_cholesky_se90().unwrap();
+        let decomp = a.mod_cholesky_se90();
         let l = decomp.l;
         let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());

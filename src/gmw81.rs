@@ -20,13 +20,14 @@
 
 use crate::utils::{index_of_largest_abs, swap_columns, swap_rows};
 use crate::Decomposition;
-use failure::Error;
 
 pub trait ModCholeskyGMW81<L, E, P>
 where
     Self: Sized,
 {
-    fn mod_cholesky_gmw81(&self) -> Result<Decomposition<L, E, P>, Error>;
+    fn mod_cholesky_gmw81(&self) -> Decomposition<L, E, P> {
+        panic!("Not implemented!")
+    }
 }
 
 impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>
@@ -35,10 +36,7 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array
     /// Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
     fn mod_cholesky_gmw81(
         &self,
-    ) -> Result<
-        Decomposition<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>,
-        Error,
-    > {
+    ) -> Decomposition<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>> {
         use ndarray::s;
         debug_assert!(self.is_square());
         let n = self.raw_dim()[0];
@@ -131,7 +129,7 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array
             e[p[i]] = ec[i];
         }
 
-        Ok(Decomposition::new(l, e, p))
+        Decomposition::new(l, e, p)
     }
 }
 
@@ -147,7 +145,7 @@ mod tests {
         let res: ndarray::Array2<f64> =
             ndarray::arr2(&[[4.0, 2.0, 1.0], [2.0, 6.0, 3.0], [1.0, 3.0, 3.004]]);
 
-        let decomp = a.mod_cholesky_gmw81().unwrap();
+        let decomp = a.mod_cholesky_gmw81();
         let l = decomp.l;
         let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
@@ -174,7 +172,7 @@ mod tests {
             [0.0, 0.0, 1.058924144384121],
         ]);
         let res = res_l_up.t().dot(&res_l_up);
-        let decomp = a.mod_cholesky_gmw81().unwrap();
+        let decomp = a.mod_cholesky_gmw81();
         let l = decomp.l;
         let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
@@ -216,7 +214,7 @@ mod tests {
         ]);
         let res = res_l_up.t().dot(&res_l_up);
 
-        let decomp = a.mod_cholesky_gmw81().unwrap();
+        let decomp = a.mod_cholesky_gmw81();
         let l = decomp.l;
         let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
@@ -273,7 +271,7 @@ mod tests {
         ]);
         let res = res_l_up.t().dot(&res_l_up);
 
-        let decomp = a.mod_cholesky_gmw81().unwrap();
+        let decomp = a.mod_cholesky_gmw81();
         let l = decomp.l;
         let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
         let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());

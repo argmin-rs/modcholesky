@@ -10,6 +10,7 @@ use ndarray_rand::RandomExt;
 use rand::distributions::Uniform;
 use rand::prelude::*;
 
+/// Computes the Eigenvalues of a 2x2 matrix
 pub fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
     let a = mat[(0, 0)];
     let b = mat[(0, 1)];
@@ -26,6 +27,7 @@ pub fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
     }
 }
 
+/// Swaps columns `idx1` and `idx2` of matrix `mat`
 pub fn swap_columns<T>(mat: &mut ndarray::Array2<T>, idx1: usize, idx2: usize)
 where
     ndarray::OwnedRepr<T>: ndarray::Data,
@@ -36,6 +38,7 @@ where
     }
 }
 
+/// Swaps rows `idx1` and `idx2` of matrix `mat`
 pub fn swap_rows<T>(mat: &mut ndarray::Array2<T>, idx1: usize, idx2: usize)
 where
     ndarray::OwnedRepr<T>: ndarray::Data,
@@ -46,6 +49,7 @@ where
     }
 }
 
+/// Returns the index of the largest element in a 1D array
 pub fn index_of_largest<'a, T>(c: &ndarray::ArrayView1<T>) -> usize
 where
     <ndarray::ViewRepr<&'a T> as ndarray::Data>::Elem:
@@ -68,6 +72,7 @@ where
     max_idx
 }
 
+/// Returns the index of the element with the largest absolute value in a 1D array
 pub fn index_of_largest_abs<'a, T>(c: &ndarray::ArrayView1<T>) -> usize
 where
     <ndarray::ViewRepr<&'a T> as ndarray::Data>::Elem:
