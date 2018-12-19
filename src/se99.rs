@@ -20,25 +20,32 @@ use crate::utils::{eigenvalues_2x2, index_of_largest, swap_columns, swap_rows};
 use crate::Decomposition;
 use failure::{bail, Error};
 
-pub trait ModCholeskySE99
+pub trait ModCholeskySE99<L, E, P>
 where
     Self: Sized,
 {
-    fn mod_cholesky_se99(&self) -> Result<Decomposition<Self, Self, Self>, Error> {
+    fn mod_cholesky_se99(&self) -> Result<Decomposition<L, E, P>, Error> {
         bail!("Not implemented!")
     }
 }
 
-impl ModCholeskySE99 for ndarray::Array2<f64> {
-    fn mod_cholesky_se99(&self) -> Result<Decomposition<Self, Self, Self>, Error> {
+impl ModCholeskySE99<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>
+    for ndarray::Array2<f64>
+{
+    fn mod_cholesky_se99(
+        &self,
+    ) -> Result<
+        Decomposition<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1<usize>>,
+        Error,
+    > {
         assert!(self.is_square());
         use ndarray::s;
 
         let n = self.raw_dim()[0];
 
         let mut l = self.clone();
-        let mut e = ndarray::Array2::zeros((n, n));
-        let mut p = ndarray::Array2::eye(n);
+        let mut e = ndarray::Array1::zeros(n);
+        let mut p = ndarray::Array1::from_iter(0..n);
 
         // cbrt = cubic root
         let tau = std::f64::EPSILON.cbrt();
@@ -73,7 +80,7 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                 if max_idx != 0 {
                     swap_rows(&mut l, j, j + max_idx);
                     swap_columns(&mut l, j, j + max_idx);
-                    swap_rows(&mut p, j, j + max_idx);
+                    p.swap(j, j + max_idx);
                 }
                 let tmp = ((j + 1)..n).fold(std::f64::INFINITY, |acc, i| {
                     let nv = l[(i, i)] - l[(i, j)].powi(2) / l[(j, j)];
@@ -109,8 +116,8 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
 
         // Phase two, A not positive definite
         if !phaseone && j == n - 1 {
-            e[(j, j)] = -l[(j, j)] + (tau_bar * gamma).max(tau * (-l[(j, j)]) / (1.0 - tau));
-            l[(j, j)] += e[(j, j)];
+            e[j] = -l[(j, j)] + (tau_bar * gamma).max(tau * (-l[(j, j)]) / (1.0 - tau));
+            l[(j, j)] += e[j];
             l[(j, j)] = l[(j, j)].sqrt();
         }
 
@@ -132,18 +139,18 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
                 if max_idx != 0 {
                     swap_rows(&mut l, j, j + max_idx);
                     swap_columns(&mut l, j, j + max_idx);
-                    swap_rows(&mut p, j, j + max_idx);
+                    p.swap(j, j + max_idx);
                     g.swap(j, j + max_idx);
                 }
 
                 // Calculate E_jj and add to diagonal
                 let normj = l.slice(s![(j + 1).., j]).map(|x| x.abs()).scalar_sum();
-                e[(j, j)] = 0.0f64
+                e[j] = 0.0f64
                     .max(delta_prev)
                     .max(-l[(j, j)] + normj.max(tau_bar * gamma));
-                if e[(j, j)] > 0.0 {
-                    l[(j, j)] += e[(j, j)];
-                    delta_prev = e[(j, j)];
+                if e[j] > 0.0 {
+                    l[(j, j)] += e[j];
+                    delta_prev = e[j];
                 }
 
                 // Update Gershgorin bound estimates
@@ -169,13 +176,13 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
 
             // final 2x2 submatrix
             let (lhi, llo) = eigenvalues_2x2(&l.slice(s![(n - 2).., (n - 2)..]));
-            e[(n - 2, n - 2)] = 0.0f64
+            e[n - 2] = 0.0f64
                 .max(-llo + (tau_bar * gamma).max(tau * (lhi - llo) / (1.0 - tau)))
                 .max(delta_prev);
-            e[(n - 1, n - 1)] = e[(n - 2, n - 2)];
-            if e[(n - 2, n - 2)] > 0.0 {
-                l[(n - 2, n - 2)] += e[(n - 2, n - 2)];
-                l[(n - 1, n - 1)] += e[(n - 1, n - 1)];
+            e[n - 1] = e[n - 2];
+            if e[n - 2] > 0.0 {
+                l[(n - 2, n - 2)] += e[n - 2];
+                l[(n - 1, n - 1)] += e[n - 1];
                 // delta_prev = delta;
             }
             l[(n - 2, n - 2)] = l[(n - 2, n - 2)].sqrt();
@@ -188,13 +195,20 @@ impl ModCholeskySE99 for ndarray::Array2<f64> {
             l.slice_mut(s![i, (i + 1)..]).fill(0.0);
         }
 
-        Ok(Decomposition::new(l, p.dot(&e.dot(&p.t())), p))
+        // Reorder E
+        let ec = e.clone();
+        for i in 0..n {
+            e[p[i]] = ec[i];
+        }
+
+        Ok(Decomposition::new(l, e, p))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::utils::*;
 
     #[test]
     fn test_modchol_se99_3x3() {
@@ -208,8 +222,8 @@ mod tests {
         let res = res_l_up.t().dot(&res_l_up);
         let decomp = a.mod_cholesky_se99().unwrap();
         let l = decomp.l;
-        let e = decomp.e;
-        let p = decomp.p;
+        let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
+        let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
         // println!("L:\n{:?}", l);
@@ -250,8 +264,8 @@ mod tests {
 
         let decomp = a.mod_cholesky_se99().unwrap();
         let l = decomp.l;
-        let e = decomp.e;
-        let p = decomp.p;
+        let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
+        let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
         // println!("L:\n{:?}", l);
@@ -309,8 +323,8 @@ mod tests {
 
         let decomp = a.mod_cholesky_se99().unwrap();
         let l = decomp.l;
-        let e = decomp.e;
-        let p = decomp.p;
+        let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
+        let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
         // println!("L:\n{:?}", l);
