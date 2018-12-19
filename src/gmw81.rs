@@ -126,12 +126,13 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array
         // multiply with dout and return
         l = l.dot(&dout);
 
+        // Reorder E
         let ec = e.clone();
         for i in 0..n {
             e[p[i]] = ec[i];
         }
 
-        Ok(Decomposition::new(l.clone(), e, p))
+        Ok(Decomposition::new(l, e, p))
     }
 }
 
