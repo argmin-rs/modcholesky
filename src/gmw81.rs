@@ -43,8 +43,8 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array
         debug_assert!(self.is_square());
         let n = self.raw_dim()[0];
         let mut l = self.clone();
-        let mut p = ndarray::Array1::from_iter(0..n);
         let mut e = ndarray::Array1::zeros(n);
+        let mut p = ndarray::Array1::from_iter(0..n);
 
         let diag_max = l
             .diag()
@@ -74,7 +74,6 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array
                 swap_columns(&mut c, j, j + max_idx);
                 swap_rows(&mut l, j, j + max_idx);
                 swap_columns(&mut l, j, j + max_idx);
-                // swap_rows(&mut p, j, j + max_idx);
                 p.swap(j, j + max_idx);
             }
             for s in 0..j {
