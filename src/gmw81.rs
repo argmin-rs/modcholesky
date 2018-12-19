@@ -22,21 +22,29 @@ use crate::utils::{index_of_largest_abs, swap_columns, swap_rows};
 use crate::Decomposition;
 use failure::Error;
 
-pub trait ModCholeskyGMW81
+pub trait ModCholeskyGMW81<L, E, P>
 where
     Self: Sized,
 {
-    fn mod_cholesky_gmw81(&self) -> Result<Decomposition<Self, Self, Self>, Error>;
+    fn mod_cholesky_gmw81(&self) -> Result<Decomposition<L, E, P>, Error>;
 }
 
-impl ModCholeskyGMW81 for ndarray::Array2<f64> {
+impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array2<f64>, ndarray::Array1<usize>>
+    for ndarray::Array2<f64>
+{
     /// Algorithm 6.5 in "Numerical Optimization" by Nocedal and Wright
-    fn mod_cholesky_gmw81(&self) -> Result<Decomposition<Self, Self, Self>, Error> {
+    fn mod_cholesky_gmw81(
+        &self,
+    ) -> Result<
+        Decomposition<ndarray::Array2<f64>, ndarray::Array2<f64>, ndarray::Array1<usize>>,
+        Error,
+    > {
         use ndarray::s;
         debug_assert!(self.is_square());
         let n = self.raw_dim()[0];
         let mut l = self.clone();
-        let mut p = ndarray::Array2::eye(n);
+        // let mut p = ndarray::Array2::eye(n);
+        let mut p = ndarray::Array1::from_iter(0..n);
         let mut e = ndarray::Array2::zeros((n, n));
 
         let diag_max = l
@@ -67,7 +75,8 @@ impl ModCholeskyGMW81 for ndarray::Array2<f64> {
                 swap_columns(&mut c, j, j + max_idx);
                 swap_rows(&mut l, j, j + max_idx);
                 swap_columns(&mut l, j, j + max_idx);
-                swap_rows(&mut p, j, j + max_idx);
+                // swap_rows(&mut p, j, j + max_idx);
+                p.swap(j, j + max_idx);
             }
             for s in 0..j {
                 l[(j, s)] = c[(j, s)] / d[s];
@@ -117,13 +126,20 @@ impl ModCholeskyGMW81 for ndarray::Array2<f64> {
 
         // multiply with dout and return
         l = l.dot(&dout);
-        Ok(Decomposition::new(l.clone(), p.t().dot(&e.dot(&p)), p))
+
+        let wtf: ndarray::Array1<f64> = e.diag().iter().cloned().collect();
+        for i in 0..n {
+            e[(p[i], p[i])] = wtf[i];
+        }
+
+        Ok(Decomposition::new(l.clone(), e, p))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::utils::*;
 
     #[test]
     fn test_modchol_gmw81_3x3() {
@@ -135,7 +151,7 @@ mod tests {
         let decomp = a.mod_cholesky_gmw81().unwrap();
         let l = decomp.l;
         let e = decomp.e;
-        let p = decomp.p;
+        let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let res = p.dot(&res.dot(&p.t()));
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
@@ -162,7 +178,7 @@ mod tests {
         let decomp = a.mod_cholesky_gmw81().unwrap();
         let l = decomp.l;
         let e = decomp.e;
-        let p = decomp.p;
+        let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
         // println!("L:\n{:?}", l);
@@ -204,7 +220,7 @@ mod tests {
         let decomp = a.mod_cholesky_gmw81().unwrap();
         let l = decomp.l;
         let e = decomp.e;
-        let p = decomp.p;
+        let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
         // println!("L:\n{:?}", l);
@@ -261,7 +277,7 @@ mod tests {
         let decomp = a.mod_cholesky_gmw81().unwrap();
         let l = decomp.l;
         let e = decomp.e;
-        let p = decomp.p;
+        let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
         let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
         // println!("A:\n{:?}", a);
         // println!("L:\n{:?}", l);

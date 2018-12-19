@@ -90,6 +90,15 @@ where
     max_idx
 }
 
+pub fn index_to_permutation_mat(idxs: &[usize]) -> ndarray::Array2<f64> {
+    let n = idxs.len();
+    let mut mat = ndarray::Array2::zeros((n, n));
+    for i in 0..n {
+        mat[(i, idxs[i])] = 1.0;
+    }
+    mat
+}
+
 #[allow(dead_code)]
 pub fn random_householder(dim: usize, seed: u8) -> ndarray::Array2<f64> {
     // dear god I just want some random numbers with a given seed....
