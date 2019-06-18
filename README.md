@@ -19,7 +19,7 @@ Add this to your `Cargo.toml`:
 
 ```
 [dependencies]
-modcholesky = "0.1.0"
+modcholesky = "0.1.1"
 ```
 
 ## References
