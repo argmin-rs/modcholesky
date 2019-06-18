@@ -1,12 +1,12 @@
 [package]
 name = "modcholesky"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Stefan Kroboth <stefan.kroboth@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
 description = "Modified Cholesky decompositions"
 documentation = "https://argmin-rs.github.io/modcholesky/modcholesky/"
-homepage = "https://github.com/argmin-rs/modcholesky"
+homepage = "http://argmin-rs.org"
 repository = "https://github.com/argmin-rs/modcholesky"
 readme = "README.md"
 keywords = ["optimization", "math", "science", "HPC"]
