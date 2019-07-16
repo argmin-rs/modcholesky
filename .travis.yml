@@ -12,9 +12,9 @@ rust:
 cache: cargo
 
 script:
-  - cargo build --verbose --all --all-features
+  - cargo build --verbose --all --features "openblas"
   - cargo clean
-  - cargo test --verbose --all --all-features
+  - cargo test --verbose --all --features "openblas"
 
 addons:
   apt:
