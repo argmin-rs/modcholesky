@@ -7,6 +7,7 @@
 
 use crate::utils::{eigenvalues_2x2, index_of_largest, swap_columns, swap_rows};
 use crate::Decomposition;
+use std::iter::FromIterator;
 
 /// Schnabel & Eskow algorithm (1999)
 ///
@@ -42,7 +43,7 @@ impl ModCholeskySE99<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
 
         let mut l = self.clone();
         let mut e = ndarray::Array1::zeros(n);
-        let mut p = ndarray::Array1::from_iter(0..n);
+        let mut p = ndarray::Array::from_iter(0..n);
 
         // cbrt = cubic root
         let tau = std::f64::EPSILON.cbrt();
@@ -206,6 +207,7 @@ impl ModCholeskySE99<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
 mod tests {
     use super::*;
     use crate::utils::*;
+    use approx::AbsDiffEq;
 
     #[test]
     fn test_modchol_se99_3x3() {
@@ -229,8 +231,8 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
-        assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
+        assert!(paptpept.abs_diff_eq(&l.dot(&l.t()), 1e-12));
+        assert!(l.dot(&(l.t())).abs_diff_eq(&res, 1e-12));
     }
 
     #[test]
@@ -271,10 +273,10 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
+        assert!(paptpept.abs_diff_eq(&l.dot(&l.t()), 1e-12));
         // for some reason numerical problems make this test difficult, therefore the tolerance is
         // 1e-1. Essentially the problem lies in `res` and not in `LL^T`.
-        assert!(l.dot(&(l.t())).all_close(&res, 1e-1));
+        assert!(l.dot(&(l.t())).abs_diff_eq(&res, 1e-1));
     }
 
     #[test]
@@ -330,9 +332,9 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
+        assert!(paptpept.abs_diff_eq(&l.dot(&l.t()), 1e-12));
         // for some reason numerical problems make this test difficult, therefore the tolerance is
         // 1e-1. Essentially the problem lies in `res` and not in `LL^T`.
-        assert!(l.dot(&(l.t())).all_close(&res, 1e-3));
+        assert!(l.dot(&(l.t())).abs_diff_eq(&res, 1e-3));
     }
 }

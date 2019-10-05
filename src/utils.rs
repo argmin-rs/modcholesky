@@ -9,6 +9,7 @@
 use ndarray_rand::RandomExt;
 use rand::distributions::Uniform;
 use rand::prelude::*;
+use std::iter::FromIterator;
 
 /// Computes the Eigenvalues of a 2x2 matrix
 pub fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
@@ -52,7 +53,7 @@ where
 /// Returns the index of the largest element in a 1D array
 pub fn index_of_largest<'a, T>(c: &ndarray::ArrayView1<T>) -> usize
 where
-    <ndarray::ViewRepr<&'a T> as ndarray::Data>::Elem:
+    <ndarray::ViewRepr<&'a T> as ndarray::RawData>::Elem:
         std::cmp::PartialOrd + num::traits::Signed + Clone,
 {
     // let mut max = num::abs(c[0].clone());
@@ -75,7 +76,7 @@ where
 /// Returns the index of the element with the largest absolute value in a 1D array
 pub fn index_of_largest_abs<'a, T>(c: &ndarray::ArrayView1<T>) -> usize
 where
-    <ndarray::ViewRepr<&'a T> as ndarray::Data>::Elem:
+    <ndarray::ViewRepr<&'a T> as ndarray::RawData>::Elem:
         std::cmp::PartialOrd + num::traits::Signed + Clone,
 {
     let mut max = num::abs(c[0].clone());
@@ -112,7 +113,7 @@ where
 {
     let n = arr.len();
     let mut mat: ndarray::Array2<T> = ndarray::Array2::zeros((n, n));
-    let diag: ndarray::Array1<T> = ndarray::Array1::from_iter(arr.into_iter().cloned());
+    let diag: ndarray::Array1<T> = ndarray::Array::from_iter(arr.into_iter().cloned());
     mat.diag_mut().assign(&diag);
     mat
 }
@@ -155,6 +156,7 @@ pub fn random_diagonal(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use approx::AbsDiffEq;
 
     #[test]
     fn test_swap_columns() {
@@ -227,7 +229,7 @@ mod tests {
             [-0.0000034067079459632055, -0.9999999999941971],
             [-0.9999999999941971, 0.0000034067079460742278],
         ]);
-        assert!(q.all_close(&res, 1e-19));
+        assert!(q.abs_diff_eq(&res, 1e-19));
     }
 
     #[test]
@@ -235,7 +237,7 @@ mod tests {
         let d = random_diagonal(2, (-1.0, 1.0), 0, 128);
         let res: ndarray::Array2<f64> =
             ndarray::arr2(&[[0.003923416145884984, 0.0], [0.0, 0.0039215684018965025]]);
-        assert!(d.all_close(&res, 1e-19));
+        assert!(d.abs_diff_eq(&res, 1e-19));
     }
 
     #[test]
@@ -243,6 +245,6 @@ mod tests {
         let d = random_diagonal(2, (-1.0, 1.0), 1, 128);
         let res: ndarray::Array2<f64> =
             ndarray::arr2(&[[-0.49803921207376156, 0.0], [0.0, 0.0039215684018965025]]);
-        assert!(d.all_close(&res, 1e-19));
+        assert!(d.abs_diff_eq(&res, 1e-19));
     }
 }

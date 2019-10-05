@@ -17,18 +17,21 @@ exclude = [
 ]
 
 [dependencies]
-ndarray = "0.12.0"
-ndarray-linalg = { version = "0.10.0" }
+ndarray = { version = "0.13", features = ["approx"] }
+ndarray-linalg = { version = "0.11" }
 num = "0.2"
-ndarray-rand = "0.9.0"
-rand = "0.6.1"
-rand_xorshift = "0.1.0"
+ndarray-rand = "0.11"
+rand = "0.7.2"
+rand_xorshift = "0.2.0"
 
 [features]
 default = []
 openblas = ["ndarray-linalg/openblas"]
 netlib = ["ndarray-linalg/netlib"]
 intel-mkl = ["ndarray-linalg/intel-mkl"]
+
+[dev-dependencies]
+approx = "0.3.2"
 
 # [profile.bench]
 # debug = true

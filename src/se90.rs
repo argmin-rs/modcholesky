@@ -7,6 +7,7 @@
 
 use crate::utils::{eigenvalues_2x2, index_of_largest, swap_columns, swap_rows};
 use crate::Decomposition;
+use std::iter::FromIterator;
 
 /// Schnabel & Eskow algorithm (1990)
 ///
@@ -45,7 +46,7 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
 
         let mut l = self.clone();
         let mut e = ndarray::Array1::zeros(n);
-        let mut p = ndarray::Array1::from_iter(0..n);
+        let mut p = ndarray::Array::from_iter(0..n);
 
         // cbrt = cubic root
         let tau = std::f64::EPSILON.cbrt();
@@ -159,7 +160,7 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
             e[n - 1] = e[n - 2];
             if e[n - 2] > 0.0 {
                 l[(n - 2, n - 2)] += e[n - 2];;
-                l[(n - 1, n - 1)] += e[n - 1];;
+                l[(n - 1, n - 1)] += e[n - 1];
                 // delta_prev = delta;
             }
             l[(n - 2, n - 2)] = l[(n - 2, n - 2)].sqrt();
@@ -186,6 +187,7 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
 mod tests {
     use super::*;
     use crate::utils::*;
+    use approx::AbsDiffEq;
 
     #[test]
     fn test_modchol_se90_3x3() {
@@ -209,8 +211,8 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
-        assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
+        assert!(paptpept.abs_diff_eq(&l.dot(&l.t()), 1e-12));
+        assert!(l.dot(&(l.t())).abs_diff_eq(&res, 1e-12));
     }
 
     #[test]
@@ -246,8 +248,8 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
-        assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
+        assert!(paptpept.abs_diff_eq(&l.dot(&l.t()), 1e-12));
+        assert!(l.dot(&(l.t())).abs_diff_eq(&res, 1e-12));
     }
 
     #[test]
@@ -310,7 +312,7 @@ mod tests {
         // println!("LLT:\n{:?}", l.dot(&l.t()));
         // println!("P*A*P^T + P*E*P^T:\n{:?}", paptpept);
         // println!("RES:\n{:?}", res);
-        assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
-        assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
+        assert!(paptpept.abs_diff_eq(&l.dot(&l.t()), 1e-12));
+        assert!(l.dot(&(l.t())).abs_diff_eq(&res, 1e-12));
     }
 }
