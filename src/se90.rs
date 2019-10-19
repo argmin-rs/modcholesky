@@ -159,7 +159,7 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
                 .max(delta_prev);
             e[n - 1] = e[n - 2];
             if e[n - 2] > 0.0 {
-                l[(n - 2, n - 2)] += e[n - 2];;
+                l[(n - 2, n - 2)] += e[n - 2];
                 l[(n - 1, n - 1)] += e[n - 1];
                 // delta_prev = delta;
             }
