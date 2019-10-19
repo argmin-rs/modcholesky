@@ -18,7 +18,7 @@ exclude = [
 
 [dependencies]
 ndarray = { version = "0.13", features = ["approx"] }
-ndarray-linalg = { version = "0.11" }
+ndarray-linalg = { version = "0.12" }
 num = "0.2"
 ndarray-rand = "0.11"
 rand = "0.7.2"
@@ -32,6 +32,8 @@ intel-mkl = ["ndarray-linalg/intel-mkl"]
 
 [dev-dependencies]
 approx = "0.3.2"
+# needed to run tests
+openblas-src = { version = "0.7" }
 
 # [profile.bench]
 # debug = true

@@ -10,6 +10,7 @@
 #![feature(test)]
 
 extern crate modcholesky;
+extern crate openblas_src;
 extern crate test;
 
 #[cfg(test)]
@@ -24,7 +25,7 @@ mod tests {
         let a: ndarray::Array2<f64> =
             ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
         b.iter(|| {
-            black_box(a.mod_cholesky_gmw81().unwrap());
+            black_box(a.mod_cholesky_gmw81());
         });
     }
 
@@ -37,7 +38,7 @@ mod tests {
             [3000.3, -2706.6, -501.2, 4760.8],
         ]);
         b.iter(|| {
-            black_box(a.mod_cholesky_gmw81().unwrap());
+            black_box(a.mod_cholesky_gmw81());
         });
     }
 
@@ -51,7 +52,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_gmw81().unwrap());
+            black_box(a.mod_cholesky_gmw81());
         });
     }
 
@@ -65,7 +66,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_gmw81().unwrap());
+            black_box(a.mod_cholesky_gmw81());
         });
     }
 
@@ -79,7 +80,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_gmw81().unwrap());
+            black_box(a.mod_cholesky_gmw81());
         });
     }
 
@@ -88,7 +89,7 @@ mod tests {
         let a: ndarray::Array2<f64> =
             ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
         b.iter(|| {
-            black_box(a.mod_cholesky_se90().unwrap());
+            black_box(a.mod_cholesky_se90());
         });
     }
 
@@ -101,7 +102,7 @@ mod tests {
             [3000.3, -2706.6, -501.2, 4760.8],
         ]);
         b.iter(|| {
-            black_box(a.mod_cholesky_se90().unwrap());
+            black_box(a.mod_cholesky_se90());
         });
     }
 
@@ -115,7 +116,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_se90().unwrap());
+            black_box(a.mod_cholesky_se90());
         });
     }
 
@@ -129,7 +130,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_se90().unwrap());
+            black_box(a.mod_cholesky_se90());
         });
     }
 
@@ -143,7 +144,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_se90().unwrap());
+            black_box(a.mod_cholesky_se90());
         });
     }
 
@@ -152,7 +153,7 @@ mod tests {
         let a: ndarray::Array2<f64> =
             ndarray::arr2(&[[1.0, 1.0, 2.0], [1.0, 1.0, 3.0], [2.0, 3.0, 1.0]]);
         b.iter(|| {
-            black_box(a.mod_cholesky_se99().unwrap());
+            black_box(a.mod_cholesky_se99());
         });
     }
 
@@ -165,7 +166,7 @@ mod tests {
             [3000.3, -2706.6, -501.2, 4760.8],
         ]);
         b.iter(|| {
-            black_box(a.mod_cholesky_se99().unwrap());
+            black_box(a.mod_cholesky_se99());
         });
     }
 
@@ -179,7 +180,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_se99().unwrap());
+            black_box(a.mod_cholesky_se99());
         });
     }
 
@@ -193,7 +194,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_se99().unwrap());
+            black_box(a.mod_cholesky_se99());
         });
     }
 
@@ -207,7 +208,7 @@ mod tests {
         let tmp = q1.dot(&q2.dot(&q3));
         let a = tmp.dot(&d.dot(&tmp.t()));
         b.iter(|| {
-            black_box(a.mod_cholesky_se99().unwrap());
+            black_box(a.mod_cholesky_se99());
         });
     }
 }
