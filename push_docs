@@ -2,7 +2,7 @@
 
 # Make doc
 cargo clean
-cargo doc --no-deps --all-features
+cargo doc --no-deps
 
 # Make temporary folder
 rm -rf .doc_tmp
