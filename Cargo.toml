@@ -5,7 +5,7 @@ authors = ["Stefan Kroboth <stefan.kroboth@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
 description = "Modified Cholesky decompositions"
-documentation = "https://argmin-rs.github.io/modcholesky/modcholesky/"
+documentation = "https://docs.rs/modcholesky/"
 homepage = "http://argmin-rs.org"
 repository = "https://github.com/argmin-rs/modcholesky"
 readme = "README.md"
@@ -40,3 +40,4 @@ openblas-src = { version = "0.7" }
 
 [badges]
 travis-ci = { repository = "argmin-rs/modcholesky", branch = "master" }
+maintenance = { status = "actively-developed" }
