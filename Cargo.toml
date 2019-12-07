@@ -40,4 +40,4 @@ openblas-src = { version = "0.7" }
 
 [badges]
 travis-ci = { repository = "argmin-rs/modcholesky", branch = "master" }
-maintenance = { status = "actively-developed" }
+maintenance = { status = "passively-maintained" }
