@@ -84,12 +84,12 @@
 <span class="doccomment">///   Izv. Akad. Nauk. USSR Otd. Fiz.-Mat. Nauk, 6: 749–754, 1931.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">GershgorinCircles</span> {
     <span class="doccomment">/// Computes the Gershgorin Circles of a matrix</span>
-    <span class="kw">fn</span> <span class="ident">gershgorin_circles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">f64</span>, <span class="ident">f64</span>)<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">gershgorin_circles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">f64</span>, <span class="ident">f64</span>)<span class="op">&gt;</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">GershgorinCircles</span> <span class="kw">for</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Computes the Gershgorin Circles of a matrix</span>
-    <span class="kw">fn</span> <span class="ident">gershgorin_circles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">f64</span>, <span class="ident">f64</span>)<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">gershgorin_circles</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">f64</span>, <span class="ident">f64</span>)<span class="op">&gt;</span> {
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">is_square</span>());
         <span class="comment">// use ndarray::s;</span>
         <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">raw_dim</span>()[<span class="number">0</span>];
@@ -100,11 +100,11 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ri</span> <span class="op">=</span> <span class="number">0.0</span>;
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ci</span> <span class="op">=</span> <span class="number">0.0</span>;
             <span class="kw">for</span> <span class="ident">j</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">n</span> {
-                <span class="kw">if</span> <span class="ident">i</span> <span class="op">==</span> <span class="ident">j</span> {
+                <span class="kw">if</span> <span class="ident">i</span> <span class="op">=</span><span class="op">=</span> <span class="ident">j</span> {
                     <span class="kw">continue</span>;
                 }
-                <span class="ident">ri</span> <span class="op">+=</span> <span class="self">self</span>[(<span class="ident">i</span>, <span class="ident">j</span>)].<span class="ident">abs</span>();
-                <span class="ident">ci</span> <span class="op">+=</span> <span class="self">self</span>[(<span class="ident">j</span>, <span class="ident">i</span>)].<span class="ident">abs</span>();
+                <span class="ident">ri</span> <span class="op">+</span><span class="op">=</span> <span class="self">self</span>[(<span class="ident">i</span>, <span class="ident">j</span>)].<span class="ident">abs</span>();
+                <span class="ident">ci</span> <span class="op">+</span><span class="op">=</span> <span class="self">self</span>[(<span class="ident">j</span>, <span class="ident">i</span>)].<span class="ident">abs</span>();
             }
             <span class="ident">out</span>.<span class="ident">push</span>((<span class="ident">aii</span>, <span class="ident">ri</span>.<span class="ident">min</span>(<span class="ident">ci</span>)));
         }

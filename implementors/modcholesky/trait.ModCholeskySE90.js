@@ -6,5 +6,4 @@ implementors["modcholesky"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

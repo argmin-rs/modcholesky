@@ -6,5 +6,4 @@ implementors["modcholesky"] = [{text:"impl&lt;L, E, P&gt; Freeze for <a class=\"
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()
