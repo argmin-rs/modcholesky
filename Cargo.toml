@@ -33,7 +33,7 @@ intel-mkl = ["ndarray-linalg/intel-mkl"]
 [dev-dependencies]
 approx = "0.3.2"
 # needed to run tests
-openblas-src = { version = "0.9" }
+openblas-src = { version = "0.10" }
 
 # [profile.bench]
 # debug = true
