@@ -31,7 +31,7 @@ netlib = ["ndarray-linalg/netlib"]
 intel-mkl = ["ndarray-linalg/intel-mkl"]
 
 [dev-dependencies]
-approx = "0.3.2"
+approx = "0.4.0"
 # needed to run tests
 openblas-src = { version = "0.9" }
 
