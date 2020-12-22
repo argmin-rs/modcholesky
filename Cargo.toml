@@ -20,7 +20,7 @@ exclude = [
 ndarray = { version = "0.13", features = ["approx"] }
 ndarray-linalg = { version = "0.12" }
 num = "0.3"
-ndarray-rand = "0.11"
+ndarray-rand = "0.13"
 rand = "0.7.2"
 rand_xorshift = "0.2.0"
 
