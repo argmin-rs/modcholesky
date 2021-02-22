@@ -27,6 +27,7 @@
 //! ```rust
 //! # extern crate openblas_src;
 //! # use modcholesky::utils::{diag_mat_from_arr, index_to_permutation_mat};
+//! # use approx::AbsDiffEq;
 //! use modcholesky::ModCholeskySE99;
 //!
 //! let a = ndarray::arr2(&[[1.0, 1.0, 2.0],
@@ -50,13 +51,13 @@
 //! # ]);
 //! # let res = res_l.dot(&res_l.t());
 //! #
-//! # assert!(res_l.all_close(&l, 1e-12));
+//! # assert!(res_l.abs_diff_eq(&l, 1e-12));
 //! #
 //! # let e = diag_mat_from_arr(decomp.e.as_slice().unwrap());
 //! # let p = index_to_permutation_mat(decomp.p.as_slice().unwrap());
 //! # let paptpept = p.dot(&a.dot(&p.t())) + p.dot(&e.dot(&p.t()));
-//! # assert!(paptpept.all_close(&l.dot(&l.t()), 1e-12));
-//! # assert!(l.dot(&(l.t())).all_close(&res, 1e-12));
+//! # assert!(paptpept.abs_diff_eq(&l.dot(&l.t()), 1e-12));
+//! # assert!(l.dot(&(l.t())).abs_diff_eq(&res, 1e-12));
 //! ```
 //!
 //! # TODOs
