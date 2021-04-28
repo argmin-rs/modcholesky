@@ -1,0 +1,29 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: ndarray-linalg
+    versions:
+    - 0.12.1
+  - dependency-name: rand
+    versions:
+    - 0.8.3
+  - dependency-name: ndarray-rand
+    versions:
+    - 0.13.0
+  - dependency-name: rand_xorshift
+    versions:
+    - 0.3.0
+  - dependency-name: ndarray
+    versions:
+    - 0.14.0
+  - dependency-name: approx
+    versions:
+    - 0.4.0
+  - dependency-name: openblas-src
+    versions:
+    - 0.9.0
