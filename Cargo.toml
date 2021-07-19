@@ -18,7 +18,7 @@ exclude = [
 
 [dependencies]
 ndarray = { version = "0.14", features = ["approx"] }
-ndarray-linalg = { version = "0.13" }
+ndarray-linalg = { version = "0.14" }
 num = "0.4"
 ndarray-rand = "0.13"
 rand = "0.8.3"
