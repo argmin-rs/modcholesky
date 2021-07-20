@@ -1,7 +1,7 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/utils.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>utils.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/utils.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>utils.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><script src="../../crates.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../modcholesky/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a href='../../modcholesky/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" height="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
+                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" height="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -243,14 +243,6 @@
 <span id="240">240</span>
 <span id="241">241</span>
 <span id="242">242</span>
-<span id="243">243</span>
-<span id="244">244</span>
-<span id="245">245</span>
-<span id="246">246</span>
-<span id="247">247</span>
-<span id="248">248</span>
-<span id="249">249</span>
-<span id="250">250</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2018-2020 argmin developers</span>
 <span class="comment">//</span>
@@ -260,13 +252,12 @@
 <span class="comment">// copied, modified, or distributed except according to those terms.</span>
 
 <span class="doccomment">//! Utility functions</span>
-<span class="kw">use</span> <span class="ident">ndarray_rand</span>::<span class="ident">RandomExt</span>;
-<span class="kw">use</span> <span class="ident">rand</span>::<span class="ident">distributions</span>::<span class="ident">Uniform</span>;
-<span class="kw">use</span> <span class="ident">rand</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">iter</span>::<span class="ident">FromIterator</span>;
+<span class="kw">use</span> <span class="ident">ndarray_rand::RandomExt</span>;
+<span class="kw">use</span> <span class="ident">rand::distributions::Uniform</span>;
+<span class="kw">use</span> <span class="ident">rand::prelude</span>::<span class="kw-2">*</span>;
 
 <span class="doccomment">/// Computes the Eigenvalues of a 2x2 matrix</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eigenvalues_2x2</span>(<span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="ident">ndarray</span>::<span class="ident">ArrayView2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">f64</span>, <span class="ident">f64</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eigenvalues_2x2</span>(<span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="ident">ndarray::ArrayView2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">f64</span>, <span class="ident">f64</span>) {
     <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">mat</span>[(<span class="number">0</span>, <span class="number">0</span>)];
     <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">mat</span>[(<span class="number">0</span>, <span class="number">1</span>)];
     <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">mat</span>[(<span class="number">1</span>, <span class="number">0</span>)];
@@ -274,7 +265,6 @@
     <span class="kw">let</span> <span class="ident">tmp</span> <span class="op">=</span> ((<span class="op">-</span>(<span class="ident">a</span> <span class="op">+</span> <span class="ident">d</span>) <span class="op">/</span> <span class="number">2.0</span>).<span class="ident">powi</span>(<span class="number">2</span>) <span class="op">-</span> <span class="ident">a</span> <span class="op">*</span> <span class="ident">d</span> <span class="op">+</span> <span class="ident">b</span> <span class="op">*</span> <span class="ident">c</span>).<span class="ident">sqrt</span>();
     <span class="kw">let</span> <span class="ident">l1</span> <span class="op">=</span> (<span class="ident">a</span> <span class="op">+</span> <span class="ident">d</span>) <span class="op">/</span> <span class="number">2.0</span> <span class="op">+</span> <span class="ident">tmp</span>;
     <span class="kw">let</span> <span class="ident">l2</span> <span class="op">=</span> (<span class="ident">a</span> <span class="op">+</span> <span class="ident">d</span>) <span class="op">/</span> <span class="number">2.0</span> <span class="op">-</span> <span class="ident">tmp</span>;
-    <span class="comment">// if l1.abs() &gt; l2.abs() {</span>
     <span class="kw">if</span> <span class="ident">l1</span> <span class="op">&gt;</span> <span class="ident">l2</span> {
         (<span class="ident">l1</span>, <span class="ident">l2</span>)
     } <span class="kw">else</span> {
@@ -283,9 +273,9 @@
 }
 
 <span class="doccomment">/// Swaps columns `idx1` and `idx2` of matrix `mat`</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">swap_columns</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">idx1</span>: <span class="ident">usize</span>, <span class="ident">idx2</span>: <span class="ident">usize</span>)
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">swap_columns</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">idx1</span>: <span class="ident">usize</span>, <span class="ident">idx2</span>: <span class="ident">usize</span>)
 <span class="kw">where</span>
-    <span class="ident">ndarray</span>::<span class="ident">OwnedRepr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">ndarray</span>::<span class="ident">Data</span>,
+    <span class="ident">ndarray::OwnedRepr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">ndarray::Data</span>,
 {
     <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">mat</span>.<span class="ident">raw_dim</span>();
     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">s</span>[<span class="number">0</span>] {
@@ -294,9 +284,9 @@
 }
 
 <span class="doccomment">/// Swaps rows `idx1` and `idx2` of matrix `mat`</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">swap_rows</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">idx1</span>: <span class="ident">usize</span>, <span class="ident">idx2</span>: <span class="ident">usize</span>)
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">swap_rows</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">mat</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">idx1</span>: <span class="ident">usize</span>, <span class="ident">idx2</span>: <span class="ident">usize</span>)
 <span class="kw">where</span>
-    <span class="ident">ndarray</span>::<span class="ident">OwnedRepr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">ndarray</span>::<span class="ident">Data</span>,
+    <span class="ident">ndarray::OwnedRepr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">ndarray::Data</span>,
 {
     <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">mat</span>.<span class="ident">raw_dim</span>();
     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">s</span>[<span class="number">1</span>] {
@@ -305,18 +295,16 @@
 }
 
 <span class="doccomment">/// Returns the index of the largest element in a 1D array</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">index_of_largest</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">c</span>: <span class="kw-2">&amp;</span><span class="ident">ndarray</span>::<span class="ident">ArrayView1</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">index_of_largest</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">c</span>: <span class="kw-2">&amp;</span><span class="ident">ndarray::ArrayView1</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>
 <span class="kw">where</span>
-    <span class="op">&lt;</span><span class="ident">ndarray</span>::<span class="ident">ViewRepr</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">ndarray</span>::<span class="ident">RawData</span><span class="op">&gt;</span>::<span class="ident">Elem</span>:
-        <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">PartialOrd</span> <span class="op">+</span> <span class="ident">num</span>::<span class="ident">traits</span>::<span class="ident">Signed</span> <span class="op">+</span> <span class="ident">Clone</span>,
+    <span class="op">&lt;</span><span class="ident">ndarray::ViewRepr</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">ndarray::RawData</span><span class="op">&gt;</span><span class="ident">::Elem</span>:
+        <span class="ident">std::cmp::PartialOrd</span> <span class="op">+</span> <span class="ident">num::traits::Signed</span> <span class="op">+</span> <span class="ident">Clone</span>,
 {
-    <span class="comment">// let mut max = num::abs(c[0].clone());</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max</span> <span class="op">=</span> <span class="ident">c</span>[<span class="number">0</span>].<span class="ident">clone</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max_idx</span> <span class="op">=</span> <span class="number">0</span>;
     <span class="ident">c</span>.<span class="ident">iter</span>()
         .<span class="ident">enumerate</span>()
         .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">ci</span>)<span class="op">|</span> {
-            <span class="comment">// let ci = num::abs(ci.clone());</span>
             <span class="kw">let</span> <span class="ident">ci</span> <span class="op">=</span> <span class="ident">ci</span>.<span class="ident">clone</span>();
             <span class="kw">if</span> <span class="ident">ci</span> <span class="op">&gt;</span> <span class="ident">max</span> {
                 <span class="ident">max</span> <span class="op">=</span> <span class="ident">ci</span>;
@@ -328,20 +316,18 @@
 }
 
 <span class="doccomment">/// Returns the index of the element with the largest absolute value in a 1D array</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">index_of_largest_abs</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">c</span>: <span class="kw-2">&amp;</span><span class="ident">ndarray</span>::<span class="ident">ArrayView1</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">index_of_largest_abs</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">c</span>: <span class="kw-2">&amp;</span><span class="ident">ndarray::ArrayView1</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>
 <span class="kw">where</span>
-    <span class="op">&lt;</span><span class="ident">ndarray</span>::<span class="ident">ViewRepr</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">ndarray</span>::<span class="ident">RawData</span><span class="op">&gt;</span>::<span class="ident">Elem</span>:
-        <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">PartialOrd</span> <span class="op">+</span> <span class="ident">num</span>::<span class="ident">traits</span>::<span class="ident">Signed</span> <span class="op">+</span> <span class="ident">Clone</span>,
+    <span class="op">&lt;</span><span class="ident">ndarray::ViewRepr</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">ndarray::RawData</span><span class="op">&gt;</span><span class="ident">::Elem</span>:
+        <span class="ident">std::cmp::PartialOrd</span> <span class="op">+</span> <span class="ident">num::traits::Signed</span> <span class="op">+</span> <span class="ident">Clone</span>,
 {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max</span> <span class="op">=</span> <span class="ident">num</span>::<span class="ident">abs</span>(<span class="ident">c</span>[<span class="number">0</span>].<span class="ident">clone</span>());
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max</span> <span class="op">=</span> <span class="ident">num::abs</span>(<span class="ident">c</span>[<span class="number">0</span>].<span class="ident">clone</span>());
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">max_idx</span> <span class="op">=</span> <span class="number">0</span>;
     <span class="ident">c</span>.<span class="ident">iter</span>()
         .<span class="ident">enumerate</span>()
         .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">ci</span>)<span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">ci</span> <span class="op">=</span> <span class="ident">num</span>::<span class="ident">abs</span>(<span class="ident">ci</span>.<span class="ident">clone</span>());
+            <span class="kw">let</span> <span class="ident">ci</span> <span class="op">=</span> <span class="ident">num::abs</span>(<span class="ident">ci</span>.<span class="ident">clone</span>());
             <span class="kw">if</span> <span class="ident">ci</span> <span class="op">&gt;</span> <span class="ident">max</span> {
-                <span class="comment">// if (ci - max) &gt; T::from(std::f64::EPSILON * 1000000.0).unwrap() {</span>
-                <span class="comment">// if (ci - max) &gt; T::from(0.1).unwrap() {</span>
                 <span class="ident">max</span> <span class="op">=</span> <span class="ident">ci</span>;
                 <span class="ident">max_idx</span> <span class="op">=</span> <span class="ident">i</span>
             }
@@ -351,9 +337,9 @@
 }
 
 <span class="doccomment">/// Returns the permutation matrix for a vector of permuted indices</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">index_to_permutation_mat</span>(<span class="ident">idxs</span>: <span class="kw-2">&amp;</span>[<span class="ident">usize</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">index_to_permutation_mat</span>(<span class="ident">idxs</span>: <span class="kw-2">&amp;</span>[<span class="ident">usize</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">idxs</span>.<span class="ident">len</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mat</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span>::<span class="ident">zeros</span>((<span class="ident">n</span>, <span class="ident">n</span>));
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mat</span> <span class="op">=</span> <span class="ident">ndarray::Array2::zeros</span>((<span class="ident">n</span>, <span class="ident">n</span>));
     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">n</span> {
         <span class="ident">mat</span>[(<span class="ident">i</span>, <span class="ident">idxs</span>[<span class="ident">i</span>])] <span class="op">=</span> <span class="number">1.0</span>;
     }
@@ -361,24 +347,23 @@
 }
 
 <span class="doccomment">/// Builds a diagonal matrix from a 1D slice</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">diag_mat_from_arr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">arr</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">diag_mat_from_arr</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">arr</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">num</span>::<span class="ident">traits</span>::<span class="ident">identities</span>::<span class="ident">Zero</span>,
+    <span class="ident">T</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">num::traits::identities::Zero</span>,
 {
     <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">arr</span>.<span class="ident">len</span>();
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mat</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span>::<span class="ident">zeros</span>((<span class="ident">n</span>, <span class="ident">n</span>));
-    <span class="kw">let</span> <span class="ident">diag</span>: <span class="ident">ndarray</span>::<span class="ident">Array1</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">Array</span>::<span class="ident">from_iter</span>(<span class="ident">arr</span>.<span class="ident">into_iter</span>().<span class="ident">cloned</span>());
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mat</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::Array2::zeros</span>((<span class="ident">n</span>, <span class="ident">n</span>));
+    <span class="kw">let</span> <span class="ident">diag</span>: <span class="ident">ndarray::Array1</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::Array::from_iter</span>(<span class="ident">arr</span>.<span class="ident">iter</span>().<span class="ident">cloned</span>());
     <span class="ident">mat</span>.<span class="ident">diag_mut</span>().<span class="ident">assign</span>(<span class="kw-2">&amp;</span><span class="ident">diag</span>);
     <span class="ident">mat</span>
 }
 
 <span class="doccomment">/// Returns a random Householder matrix of dimension `dim` and with seed `seed`.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">random_householder</span>(<span class="ident">dim</span>: <span class="ident">usize</span>, <span class="ident">seed</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
-    <span class="comment">// dear god I just want some random numbers with a given seed....</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rng</span> <span class="op">=</span> <span class="ident">rand_xorshift</span>::<span class="ident">XorShiftRng</span>::<span class="ident">from_seed</span>([<span class="ident">seed</span>; <span class="number">16</span>]);
-    <span class="kw">let</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">Array</span>::<span class="ident">random_using</span>((<span class="ident">dim</span>, <span class="number">1</span>), <span class="ident">Uniform</span>::<span class="ident">new_inclusive</span>(<span class="op">-</span><span class="number">1.0</span>, <span class="number">1.0</span>), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">random_householder</span>(<span class="ident">dim</span>: <span class="ident">usize</span>, <span class="ident">seed</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rng</span> <span class="op">=</span> <span class="ident">rand_xorshift::XorShiftRng::from_seed</span>([<span class="ident">seed</span>; <span class="number">16</span>]);
+    <span class="kw">let</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">ndarray::Array::random_using</span>((<span class="ident">dim</span>, <span class="number">1</span>), <span class="ident">Uniform::new_inclusive</span>(<span class="op">-</span><span class="number">1.0</span>, <span class="number">1.0</span>), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);
     <span class="kw">let</span> <span class="ident">denom</span> <span class="op">=</span> <span class="ident">w</span>.<span class="ident">fold</span>(<span class="number">0.0</span>, <span class="op">|</span><span class="ident">acc</span>, <span class="kw-2">&amp;</span><span class="ident">x</span>: <span class="kw-2">&amp;</span><span class="ident">f64</span><span class="op">|</span> <span class="ident">acc</span> <span class="op">+</span> <span class="ident">x</span>.<span class="ident">powi</span>(<span class="number">2</span>));
-    <span class="ident">ndarray</span>::<span class="ident">Array</span>::<span class="ident">eye</span>(<span class="ident">dim</span>) <span class="op">-</span> <span class="number">2.0</span> <span class="op">/</span> <span class="ident">denom</span> <span class="op">*</span> <span class="ident">w</span>.<span class="ident">dot</span>(<span class="kw-2">&amp;</span><span class="ident">w</span>.<span class="ident">t</span>())
+    <span class="ident">ndarray::Array::eye</span>(<span class="ident">dim</span>) <span class="op">-</span> <span class="number">2.0</span> <span class="op">/</span> <span class="ident">denom</span> <span class="op">*</span> <span class="ident">w</span>.<span class="ident">dot</span>(<span class="kw-2">&amp;</span><span class="ident">w</span>.<span class="ident">t</span>())
 }
 
 <span class="doccomment">/// Returns a random diagonal matrix with Eigenvalues inbetween `eig_range_min` and</span>
@@ -389,11 +374,11 @@
     (<span class="ident">eig_range_min</span>, <span class="ident">eig_range_max</span>): (<span class="ident">f64</span>, <span class="ident">f64</span>),
     <span class="ident">min_neg_eigenvalues</span>: <span class="ident">usize</span>,
     <span class="ident">seed</span>: <span class="ident">u8</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rng</span> <span class="op">=</span> <span class="ident">rand_xorshift</span>::<span class="ident">XorShiftRng</span>::<span class="ident">from_seed</span>([<span class="ident">seed</span>; <span class="number">16</span>]);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">Array</span>::<span class="ident">random_using</span>(
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rng</span> <span class="op">=</span> <span class="ident">rand_xorshift::XorShiftRng::from_seed</span>([<span class="ident">seed</span>; <span class="number">16</span>]);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">ndarray::Array::random_using</span>(
         <span class="ident">dim</span>,
-        <span class="ident">Uniform</span>::<span class="ident">new_inclusive</span>(<span class="ident">eig_range_min</span>, <span class="ident">eig_range_max</span>),
+        <span class="ident">Uniform::new_inclusive</span>(<span class="ident">eig_range_min</span>, <span class="ident">eig_range_max</span>),
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>,
     );
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">idxs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">dim</span>).<span class="ident">collect</span>();
@@ -402,7 +387,7 @@
         <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="ident">idxs</span>.<span class="ident">remove</span>(<span class="ident">idxidx</span>);
         <span class="ident">w</span>[<span class="ident">idx</span>] <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>() <span class="op">-</span> <span class="number">1.0</span>;
     }
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">Array</span>::<span class="ident">eye</span>(<span class="ident">dim</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">ndarray::Array::eye</span>(<span class="ident">dim</span>);
     <span class="ident">out</span>.<span class="ident">diag_mut</span>().<span class="ident">assign</span>(<span class="kw-2">&amp;</span><span class="ident">w</span>);
     <span class="ident">out</span>
 }
@@ -410,16 +395,15 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident">approx</span>::<span class="ident">AbsDiffEq</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_swap_columns</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">a</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]]);
-        <span class="kw">super</span>::<span class="ident">swap_columns</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">a</span>, <span class="number">1</span>, <span class="number">2</span>);
-        <span class="kw">let</span> <span class="ident">c</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">4</span>, <span class="number">6</span>, <span class="number">5</span>], [<span class="number">7</span>, <span class="number">9</span>, <span class="number">8</span>]]);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">a</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]]);
+        <span class="kw">super</span><span class="ident">::swap_columns</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">a</span>, <span class="number">1</span>, <span class="number">2</span>);
+        <span class="kw">let</span> <span class="ident">c</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">4</span>, <span class="number">6</span>, <span class="number">5</span>], [<span class="number">7</span>, <span class="number">9</span>, <span class="number">8</span>]]);
         <span class="ident">a</span>.<span class="ident">iter</span>()
             .<span class="ident">zip</span>(<span class="ident">c</span>.<span class="ident">iter</span>())
-            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">x</span>, <span class="ident">y</span>)<span class="op">|</span> <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">x</span>, <span class="kw-2">*</span><span class="ident">y</span>))
+            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">x</span>, <span class="ident">y</span>)<span class="op">|</span> <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">x</span>, <span class="kw-2">*</span><span class="ident">y</span>))
             .<span class="ident">count</span>();
         <span class="comment">// this should work, but it doesn&#39;t.</span>
         <span class="comment">// assert_eq!(b, c);</span>
@@ -427,12 +411,12 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_swap_rows</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">a</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]]);
-        <span class="kw">super</span>::<span class="ident">swap_rows</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">a</span>, <span class="number">1</span>, <span class="number">2</span>);
-        <span class="kw">let</span> <span class="ident">c</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">a</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]]);
+        <span class="kw">super</span><span class="ident">::swap_rows</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">a</span>, <span class="number">1</span>, <span class="number">2</span>);
+        <span class="kw">let</span> <span class="ident">c</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]]);
         <span class="ident">a</span>.<span class="ident">iter</span>()
             .<span class="ident">zip</span>(<span class="ident">c</span>.<span class="ident">iter</span>())
-            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">x</span>, <span class="ident">y</span>)<span class="op">|</span> <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">x</span>, <span class="kw-2">*</span><span class="ident">y</span>))
+            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">x</span>, <span class="ident">y</span>)<span class="op">|</span> <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">x</span>, <span class="kw-2">*</span><span class="ident">y</span>))
             .<span class="ident">count</span>();
         <span class="comment">// this should work, but it doesn&#39;t.</span>
         <span class="comment">// assert_eq!(b, c);</span>
@@ -440,13 +424,13 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_swap_rows_and_columns</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">a</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]]);
-        <span class="kw">super</span>::<span class="ident">swap_rows</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">a</span>, <span class="number">1</span>, <span class="number">2</span>);
-        <span class="kw">super</span>::<span class="ident">swap_columns</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">a</span>, <span class="number">1</span>, <span class="number">2</span>);
-        <span class="kw">let</span> <span class="ident">c</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">9</span>, <span class="number">8</span>], [<span class="number">4</span>, <span class="number">6</span>, <span class="number">5</span>]]);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">a</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>], [<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]]);
+        <span class="kw">super</span><span class="ident">::swap_rows</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">a</span>, <span class="number">1</span>, <span class="number">2</span>);
+        <span class="kw">super</span><span class="ident">::swap_columns</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">a</span>, <span class="number">1</span>, <span class="number">2</span>);
+        <span class="kw">let</span> <span class="ident">c</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>], [<span class="number">7</span>, <span class="number">9</span>, <span class="number">8</span>], [<span class="number">4</span>, <span class="number">6</span>, <span class="number">5</span>]]);
         <span class="ident">a</span>.<span class="ident">iter</span>()
             .<span class="ident">zip</span>(<span class="ident">c</span>.<span class="ident">iter</span>())
-            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">x</span>, <span class="ident">y</span>)<span class="op">|</span> <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">x</span>, <span class="kw-2">*</span><span class="ident">y</span>))
+            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">x</span>, <span class="ident">y</span>)<span class="op">|</span> <span class="macro">assert_eq!</span>(<span class="kw-2">*</span><span class="ident">x</span>, <span class="kw-2">*</span><span class="ident">y</span>))
             .<span class="ident">count</span>();
         <span class="comment">// this should work, but it doesn&#39;t.</span>
         <span class="comment">// assert_eq!(b, c);</span>
@@ -454,53 +438,54 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_biggest_index</span>() {
-        <span class="kw">use</span> <span class="ident">ndarray</span>::<span class="ident">s</span>;
+        <span class="kw">use</span> <span class="ident">ndarray::s</span>;
         <span class="kw">let</span> <span class="ident">j</span> <span class="op">=</span> <span class="number">1</span>;
-        <span class="kw">let</span> <span class="ident">a</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span>
-            <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">0</span>], [<span class="number">4</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">0</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">0</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">8</span>]]);
-        <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">index_of_largest</span>(<span class="kw-2">&amp;</span><span class="ident">a</span>.<span class="ident">diag</span>().<span class="ident">slice</span>(<span class="macro">s</span><span class="macro">!</span>[<span class="ident">j</span>..]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">idx</span> <span class="op">+</span> <span class="ident">j</span>, <span class="number">3</span>);
+        <span class="kw">let</span> <span class="ident">a</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> <span class="op">=</span>
+            <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">0</span>], [<span class="number">4</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">0</span>], [<span class="number">7</span>, <span class="number">8</span>, <span class="number">3</span>, <span class="number">0</span>], [<span class="number">3</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">8</span>]]);
+        <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="kw">super</span><span class="ident">::index_of_largest</span>(<span class="kw-2">&amp;</span><span class="ident">a</span>.<span class="ident">diag</span>().<span class="ident">slice</span>(<span class="macro">s!</span>[<span class="ident">j</span>..]));
+        <span class="macro">assert_eq!</span>(<span class="ident">idx</span> <span class="op">+</span> <span class="ident">j</span>, <span class="number">3</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_biggest_index_abs</span>() {
-        <span class="kw">use</span> <span class="ident">ndarray</span>::<span class="ident">s</span>;
+        <span class="kw">use</span> <span class="ident">ndarray::s</span>;
         <span class="kw">let</span> <span class="ident">j</span> <span class="op">=</span> <span class="number">1</span>;
-        <span class="kw">let</span> <span class="ident">a</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[
+        <span class="kw">let</span> <span class="ident">a</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[
             [<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>, <span class="number">0.0</span>],
             [<span class="number">4.0</span>, <span class="number">2.0</span>, <span class="number">6.0</span>, <span class="number">0.0</span>],
             [<span class="number">7.0</span>, <span class="number">8.0</span>, <span class="number">3.0</span>, <span class="number">0.0</span>],
             [<span class="number">3.0</span>, <span class="number">4.0</span>, <span class="number">2.0</span>, <span class="op">-</span><span class="number">8.0</span>],
         ]);
-        <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">index_of_largest_abs</span>(<span class="kw-2">&amp;</span><span class="ident">a</span>.<span class="ident">diag</span>().<span class="ident">slice</span>(<span class="macro">s</span><span class="macro">!</span>[<span class="ident">j</span>..]));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">idx</span> <span class="op">+</span> <span class="ident">j</span>, <span class="number">3</span>);
+        <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="kw">super</span><span class="ident">::index_of_largest_abs</span>(<span class="kw-2">&amp;</span><span class="ident">a</span>.<span class="ident">diag</span>().<span class="ident">slice</span>(<span class="macro">s!</span>[<span class="ident">j</span>..]));
+        <span class="macro">assert_eq!</span>(<span class="ident">idx</span> <span class="op">+</span> <span class="ident">j</span>, <span class="number">3</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_rand_householder</span>() {
         <span class="kw">let</span> <span class="ident">q</span> <span class="op">=</span> <span class="ident">random_householder</span>(<span class="number">2</span>, <span class="number">84</span>);
-        <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[
+        <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[
             [<span class="op">-</span><span class="number">0.0000034067079459632055</span>, <span class="op">-</span><span class="number">0.9999999999941971</span>],
             [<span class="op">-</span><span class="number">0.9999999999941971</span>, <span class="number">0.0000034067079460742278</span>],
         ]);
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">q</span>.<span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
+        <span class="macro">assert!</span>(<span class="ident">q</span>.<span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_random_diagonal_all_pos</span>() {
         <span class="kw">let</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">random_diagonal</span>(<span class="number">2</span>, (<span class="op">-</span><span class="number">1.0</span>, <span class="number">1.0</span>), <span class="number">0</span>, <span class="number">128</span>);
-        <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span>
-            <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">0.003923416145884984</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">0.0039215684018965025</span>]]);
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">d</span>.<span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
+        <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span>
+            <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="number">0.003923416145884984</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">0.0039215684018965025</span>]]);
+        <span class="macro">assert!</span>(<span class="ident">d</span>.<span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_random_diagonal_one_neg</span>() {
         <span class="kw">let</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">random_diagonal</span>(<span class="number">2</span>, (<span class="op">-</span><span class="number">1.0</span>, <span class="number">1.0</span>), <span class="number">1</span>, <span class="number">128</span>);
-        <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">ndarray</span>::<span class="ident">Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span>
-            <span class="ident">ndarray</span>::<span class="ident">arr2</span>(<span class="kw-2">&amp;</span>[[<span class="op">-</span><span class="number">0.49803921207376156</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">0.0039215684018965025</span>]]);
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">d</span>.<span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
+        <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">ndarray::Array2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="op">=</span>
+            <span class="ident">ndarray::arr2</span>(<span class="kw-2">&amp;</span>[[<span class="op">-</span><span class="number">0.49803921207376156</span>, <span class="number">0.0</span>], [<span class="number">0.0</span>, <span class="number">0.0039215684018965025</span>]]);
+        <span class="macro">assert!</span>(<span class="ident">d</span>.<span class="ident">abs_diff_eq</span>(<span class="kw-2">&amp;</span><span class="ident">res</span>, <span class="number">1e-19</span>));
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "modcholesky";</script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="modcholesky" data-search-index-js="../../search-index.js" data-search-js="../../search.js"></div>
+    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script></body></html>
