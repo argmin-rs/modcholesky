@@ -25,7 +25,6 @@
 //! # Example
 //!
 //! ```rust
-//! # extern crate openblas_src;
 //! # use modcholesky::utils::{diag_mat_from_arr, index_to_permutation_mat};
 //! # use approx::AbsDiffEq;
 //! use modcholesky::ModCholeskySE99;
@@ -93,9 +92,8 @@
 #![allow(clippy::deref_addrof)]
 // I really do not like the a..=b syntax
 #![allow(clippy::range_plus_one)]
-
-#[cfg(test)]
-extern crate openblas_src;
+// allow single-character names
+#![allow(clippy::many_single_char_names)]
 
 mod gershgorin;
 mod gmw81;

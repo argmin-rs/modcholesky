@@ -7,7 +7,6 @@
 
 use crate::utils::{eigenvalues_2x2, index_of_largest, swap_columns, swap_rows};
 use crate::Decomposition;
-use std::iter::FromIterator;
 
 /// Schnabel & Eskow algorithm (1990)
 ///
@@ -106,8 +105,8 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
             let mut g = ndarray::Array::zeros(n);
             for i in k..n {
                 g[i] = l[(i, i)]
-                    - l.slice(s![i, k..i]).map(|x| x.abs()).scalar_sum()
-                    - l.slice(s![(i + 1).., i]).map(|x| x.abs()).scalar_sum();
+                    - l.slice(s![i, k..i]).map(|x| x.abs()).sum()
+                    - l.slice(s![(i + 1).., i]).map(|x| x.abs()).sum();
             }
 
             // Modified Cholesky decomposition
@@ -122,7 +121,7 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
                 }
 
                 // Calculate E_jj and add to diagonal
-                let normj = l.slice(s![(j + 1).., j]).map(|x| x.abs()).scalar_sum();
+                let normj = l.slice(s![(j + 1).., j]).map(|x| x.abs()).sum();
                 e[j] = 0.0f64
                     .max(delta_prev)
                     .max(-l[(j, j)] + normj.max(tau * gamma));
@@ -161,7 +160,6 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
             if e[n - 2] > 0.0 {
                 l[(n - 2, n - 2)] += e[n - 2];
                 l[(n - 1, n - 1)] += e[n - 1];
-                // delta_prev = delta;
             }
             l[(n - 2, n - 2)] = l[(n - 2, n - 2)].sqrt();
             l[(n - 1, n - 2)] /= l[(n - 2, n - 2)];
@@ -187,7 +185,6 @@ impl ModCholeskySE90<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array1
 mod tests {
     use super::*;
     use crate::utils::*;
-    use approx::AbsDiffEq;
 
     #[test]
     fn test_modchol_se90_3x3() {

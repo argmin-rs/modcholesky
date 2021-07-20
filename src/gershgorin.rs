@@ -21,7 +21,6 @@ impl GershgorinCircles for ndarray::Array2<f64> {
     /// Computes the Gershgorin Circles of a matrix
     fn gershgorin_circles(&self) -> Vec<(f64, f64)> {
         debug_assert!(self.is_square());
-        // use ndarray::s;
         let n = self.raw_dim()[0];
         let mut out: Vec<(f64, f64)> = Vec::with_capacity(n);
         for i in 0..n {

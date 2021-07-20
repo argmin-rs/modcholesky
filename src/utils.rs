@@ -9,7 +9,6 @@
 use ndarray_rand::RandomExt;
 use rand::distributions::Uniform;
 use rand::prelude::*;
-use std::iter::FromIterator;
 
 /// Computes the Eigenvalues of a 2x2 matrix
 pub fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
@@ -20,7 +19,6 @@ pub fn eigenvalues_2x2(mat: &ndarray::ArrayView2<f64>) -> (f64, f64) {
     let tmp = ((-(a + d) / 2.0).powi(2) - a * d + b * c).sqrt();
     let l1 = (a + d) / 2.0 + tmp;
     let l2 = (a + d) / 2.0 - tmp;
-    // if l1.abs() > l2.abs() {
     if l1 > l2 {
         (l1, l2)
     } else {
@@ -56,13 +54,11 @@ where
     <ndarray::ViewRepr<&'a T> as ndarray::RawData>::Elem:
         std::cmp::PartialOrd + num::traits::Signed + Clone,
 {
-    // let mut max = num::abs(c[0].clone());
     let mut max = c[0].clone();
     let mut max_idx = 0;
     c.iter()
         .enumerate()
         .map(|(i, ci)| {
-            // let ci = num::abs(ci.clone());
             let ci = ci.clone();
             if ci > max {
                 max = ci;
@@ -86,8 +82,6 @@ where
         .map(|(i, ci)| {
             let ci = num::abs(ci.clone());
             if ci > max {
-                // if (ci - max) > T::from(std::f64::EPSILON * 1000000.0).unwrap() {
-                // if (ci - max) > T::from(0.1).unwrap() {
                 max = ci;
                 max_idx = i
             }
@@ -113,14 +107,13 @@ where
 {
     let n = arr.len();
     let mut mat: ndarray::Array2<T> = ndarray::Array2::zeros((n, n));
-    let diag: ndarray::Array1<T> = ndarray::Array::from_iter(arr.into_iter().cloned());
+    let diag: ndarray::Array1<T> = ndarray::Array::from_iter(arr.iter().cloned());
     mat.diag_mut().assign(&diag);
     mat
 }
 
 /// Returns a random Householder matrix of dimension `dim` and with seed `seed`.
 pub fn random_householder(dim: usize, seed: u8) -> ndarray::Array2<f64> {
-    // dear god I just want some random numbers with a given seed....
     let mut rng = rand_xorshift::XorShiftRng::from_seed([seed; 16]);
     let w = ndarray::Array::random_using((dim, 1), Uniform::new_inclusive(-1.0, 1.0), &mut rng);
     let denom = w.fold(0.0, |acc, &x: &f64| acc + x.powi(2));
@@ -156,7 +149,6 @@ pub fn random_diagonal(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use approx::AbsDiffEq;
 
     #[test]
     fn test_swap_columns() {

@@ -7,7 +7,6 @@
 
 use crate::utils::{index_of_largest_abs, swap_columns, swap_rows};
 use crate::Decomposition;
-use std::iter::FromIterator;
 
 /// Gill, Murray and Wright (1981)
 ///
@@ -82,8 +81,7 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array
             }
 
             for i in j..n {
-                c[(i, j)] =
-                    l[(i, j)] - (&l.slice(s![j, 0..j]) * &c.slice(s![i, 0..j])).scalar_sum();
+                c[(i, j)] = l[(i, j)] - (&l.slice(s![j, 0..j]) * &c.slice(s![i, 0..j])).sum();
             }
 
             let theta = if j < (n - 1) {
@@ -140,7 +138,6 @@ impl ModCholeskyGMW81<ndarray::Array2<f64>, ndarray::Array1<f64>, ndarray::Array
 mod tests {
     use super::*;
     use crate::utils::*;
-    use approx::AbsDiffEq;
 
     #[test]
     fn test_modchol_gmw81_3x3() {
