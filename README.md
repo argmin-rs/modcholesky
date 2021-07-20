@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/argmin-rs/modcholesky.svg?branch=master)](https://travis-ci.org/argmin-rs/modcholesky)
+[![modcholesky CI](https://github.com/argmin-rs/modcholesky/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/argmin-rs/modcholesky/actions/workflows/ci.yml)
 [![Gitter chat](https://badges.gitter.im/argmin-rs/community.png)](https://gitter.im/argmin-rs/community)
 
 # Modified Cholesky decompositions
