@@ -21,7 +21,7 @@ Add this to your `Cargo.toml`:
 
 ```
 [dependencies]
-modcholesky = "0.1.3"
+modcholesky = "0.2"
 ```
 
 ## References
