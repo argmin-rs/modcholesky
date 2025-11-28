@@ -49,7 +49,7 @@ where
 }
 
 /// Returns the index of the largest element in a 1D array
-pub fn index_of_largest<'a, T>(c: &ndarray::ArrayView1<T>) -> usize
+pub fn index_of_largest<'a, T>(c: &ndarray::ArrayView1<'a, T>) -> usize
 where
     <ndarray::ViewRepr<&'a T> as ndarray::RawData>::Elem:
         std::cmp::PartialOrd + num::traits::Signed + Clone,
@@ -70,7 +70,7 @@ where
 }
 
 /// Returns the index of the element with the largest absolute value in a 1D array
-pub fn index_of_largest_abs<'a, T>(c: &ndarray::ArrayView1<T>) -> usize
+pub fn index_of_largest_abs<'a, T>(c: &ndarray::ArrayView1<'a, T>) -> usize
 where
     <ndarray::ViewRepr<&'a T> as ndarray::RawData>::Elem:
         std::cmp::PartialOrd + num::traits::Signed + Clone,
